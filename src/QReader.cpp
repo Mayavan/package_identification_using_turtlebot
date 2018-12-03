@@ -38,7 +38,7 @@
  *
  */
 
-#include "Package_Identification_using_Turtlebot/QReader.hpp"
+#include "package_identification_using_turtlebot/QReader.hpp"
 
 /**
  * @brief  Constructs a object
@@ -50,18 +50,24 @@ QReader::QReader() {}
  */
 QReader::~QReader() {}
 
-std::vector<uint8_t> QReader::decodeQR(cv::Mat) {
+std::vector<uint8_t> QReader::decodeQR() {
+  possibleCenters.clear();
+  estimatedModuleSize.clear();
   cv::Mat imgBW = captureImage();
   bool found = checkQCodeExists(imgBW);
+  if (found) {
+    cv::Mat QR = warpToCode(imgBW);
+    std::vector<uint8_t> data = extractBits(QR);
+  }
 }
 
 cv::Mat QReader::captureImage() {
-  std::string fileLocation = "../Test/QRCode.png";
+  std::string fileLocation = "../Test/QRCode2.jpg";
   cv::Mat img = cv::imread(fileLocation);
   cv::Mat imgBW;
-  cvtColor(img, imgBW, CV_BGR2GRAY);
-  adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
-                    CV_THRESH_BINARY, 51, 0);
+  cv::cvtColor(img, imgBW, CV_BGR2GRAY);
+  cv::adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
+                        CV_THRESH_BINARY, 51, 0);
   return imgBW;
 }
 
@@ -76,9 +82,6 @@ cv::Mat QReader::captureImage() {
  * @return true if the image has a QR code in it, else returns false
  */
 bool QReader::checkQCodeExists(cv::Mat& img) {
-  possibleCenters.clear();
-  estimatedModuleSize.clear();
-
   int skipRows = 3;
   std::vector<int> stateCount(5, 0);
   int currentState = 0;
@@ -495,7 +498,57 @@ float QReader::columnCenterEstimate(std::vector<int> stateCount, int end) {
   return mid;
 }
 
-cv::Mat QReader::warpToCode(cv::Mat) {}
-std::vector<uint8_t> QReader::extractBits(cv::Mat) {}
+/**
+ * @brief Warps the QR code to a flat perspective of only the QR Code.
+ *
+ * @param img The image to be warped.
+ *
+ * @return Returns the warped QR code.
+ */
+cv::Mat QReader::warpToCode(cv::Mat& img) {
+  // This is the smallest QR code and does not have have an alignment marker
+  cv::Point2f ptBottomRight =
+      possibleCenters[1] - possibleCenters[0] + possibleCenters[2];
+  possibleCenters.push_back(ptBottomRight);
 
-std::vector<char> QReader::decodeBits(std::vector<uint8_t>) {}
+  std::vector<cv::Point2f> src;
+  src.push_back(cv::Point2f(3.5f, 3.5f));
+  src.push_back(cv::Point2f(dimension - 3.5f, 3.5f));
+  src.push_back(cv::Point2f(3.5f, dimension - 3.5f));
+  src.push_back(cv::Point2f(dimension - 3.5f, dimension - 3.5f));
+
+  // Warp the image
+  cv::Mat transform = getPerspectiveTransform(possibleCenters, src);
+  cv::Mat output;
+  warpPerspective(img, output, transform, cv::Size(dimension, dimension),
+                  cv::INTER_NEAREST);
+  return output;
+}
+
+/**
+ * @brief Warped image of the QR code.
+ *
+ * @param marker The image from which bits have to be extracted.
+ *
+ * @return Returns the warped QR code.
+ */
+std::vector<uint8_t> QReader::extractBits(cv::Mat& marker) {
+  const int width = marker.cols;
+  const int height = marker.rows;
+
+  std::vector<uint8_t> data;
+  for (int y = 0; y < height; y++) {
+    const uchar* ptr = marker.ptr<uchar>(y);
+    for (int x = 0; x < width; x++) {
+      if (ptr[x] > 128) {
+        std::cout << "1";
+        data.push_back(1);
+      } else {
+        std::cout << "0";
+        data.push_back(0);
+      }
+    }
+    std::cout << std::endl;
+  }
+  return data;
+}
