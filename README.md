@@ -1,8 +1,8 @@
 # Package-Identification-using-Turtlebot
 
-[![Build Status](https://travis-ci.org/Mayavan/Package-Identification-using-Turtlebot.svg?branch=master)](https://travis-ci.org/Mayavan/Package-Identification-using-Turtlebot)
+[![Build Status](https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot.svg?branch=master)](https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot)
 
-[![Coverage Status](https://coveralls.io/repos/github/Mayavan/Package-Identification-using-Turtlebot/badge.svg?branch=master)](https://coveralls.io/github/Mayavan/Package-Identification-using-Turtlebot?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Mayavan/Package_Identification_using_Turtlebot/badge.svg?branch=master)](https://coveralls.io/github/Mayavan/Package_Identification_using_Turtlebot?branch=master)
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
