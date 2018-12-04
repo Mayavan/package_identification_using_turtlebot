@@ -1,6 +1,6 @@
 /**
- * @file main.cpp
- * @brief file with main function to start the execution
+ * @file PathPlannerTest.cpp
+ * @brief file to test the class PathPlanner.cpp
  *
  * @author RajendraMayavan, Adarsh Jagan
  *
@@ -37,18 +37,19 @@
  *
  */
 
-#include "package_identification_using_turtlebot/QReader.hpp"
-
+#include <gtest/gtest.h>
 #include <ros/ros.h>
+#include <vector>
 
-int main(int argc, char **argv) {
-  ros::init(argc, argv, "QBot");
-
-  ros::NodeHandle node;
-
-  // Initialization
-  QReader reader;
-  reader.decodeQR();
-
-  return 0;
+/**
+ * @brief      Testing if the path planner works properly
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     test
+ *
+ * @return     none
+ */
+TEST(moveTo, checkPlanner) {
+  // TODO(mayavan): Test condition to be implemented
+  EXPECT_EQ(1, 1);
 }

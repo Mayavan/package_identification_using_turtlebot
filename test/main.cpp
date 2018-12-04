@@ -1,6 +1,6 @@
 /**
  * @file main.cpp
- * @brief file with main function to start the execution
+ * @brief file with main function to start all the tests
  *
  * @author RajendraMayavan, Adarsh Jagan
  *
@@ -37,18 +37,23 @@
  *
  */
 
-#include "package_identification_using_turtlebot/QReader.hpp"
-
+#include <gtest/gtest.h>
 #include <ros/ros.h>
 
-int main(int argc, char **argv) {
-  ros::init(argc, argv, "QBot");
+std::shared_ptr<ros::NodeHandle> nh;
 
-  ros::NodeHandle node;
+/**
+ * @brief Run all the tests that were declared with TEST()
+ *
+ * @param[in] argc
+ * @param[in] argv
+ *
+ * @return 0 if executed with no errors
+ */
 
-  // Initialization
-  QReader reader;
-  reader.decodeQR();
-
-  return 0;
+int main(int argc, char** argv) {
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "tester");
+  nh.reset(new ros::NodeHandle);
+  return RUN_ALL_TESTS();
 }

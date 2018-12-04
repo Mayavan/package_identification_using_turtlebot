@@ -62,7 +62,9 @@ std::vector<uint8_t> QReader::decodeQR() {
 }
 
 cv::Mat QReader::captureImage() {
-  std::string fileLocation = "../Test/QRCode2.jpg";
+  std::string fileLocation =
+      "/home/mayavan/catkin_ws/src/package_identification_using_turtlebot/Test/"
+      "QRCodeTest.png";
   cv::Mat img = cv::imread(fileLocation);
   cv::Mat imgBW;
   cv::cvtColor(img, imgBW, CV_BGR2GRAY);
