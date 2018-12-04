@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(Package_Identification_using_Turtlebot)
+project(package_identification_using_turtlebot)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  gazebo_ros
 )
 
 ## System dependencies are found with CMake's conventions
