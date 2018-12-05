@@ -21,6 +21,21 @@ The sprint planning and review document can be viewed [here.](https://docs.googl
 
 ## Dependencies
 
+This project is run on top of Ubuntu 16.04 with ROS Kinetic and Gazebo 7.14. 
+
+This project requires the following packages to be installed, they can be installed by running:
+
+Ensure that packages such as move_base, actionlib, and gazebo_ros packages are installed:
+```
+sudo apt-get install ros-kinetic-move-base ros-kinetic-actionlib ros-kinetic-gazebo-ros
+```
+Turtlebot packages required are:
+```
+sudo apt-get install ros-kinetic-turtlebot-gazebo ros-kinetic-turtlebot-apps ros-kinetic-turtlebot-rviz-launchers
+```
+For the vision aspects of the project, we use OpenCV 3.3.1. It can be installed from [here](https://www.learnopencv.com/install-opencv3-on-ubuntu/)
+
+
 ## Run
 
 ## Test
