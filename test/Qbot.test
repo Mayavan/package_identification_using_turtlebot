@@ -1,0 +1,13 @@
+<launch>
+    <node
+        name = "checkCode"
+        pkg = "package_identification_using_turtlebot"
+        type = "Qbot"
+    />
+
+    <test 
+        test-name="QbotTest" 
+        pkg="package_identification_using_turtlebot" 
+        type="QbotTest" 
+    />
+</launch>

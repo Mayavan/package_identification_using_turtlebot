@@ -30,4 +30,23 @@ add_executable(sendGoals src/sendGoals.cpp)
 target_include_directories(checkCode PRIVATE ${PYTHON_INCLUDE_DIRS})
 
 target_link_libraries(checkCode ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
+
 target_link_libraries(sendGoals ${catkin_LIBRARIES})
+
+## Build tests
+if(CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+
+  add_rostest_gtest(
+  QbotTest
+  test/Qbot.test
+  test/main.cpp
+  test/QReaderTest.cpp
+  test/PathPlannerTest.cpp
+  )
+
+  target_include_directories(QbotTest PRIVATE ${PYTHON_INCLUDE_DIRS})
+
+  target_link_libraries(QbotTest ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
+  
+endif()

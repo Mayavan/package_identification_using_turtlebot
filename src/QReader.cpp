@@ -57,12 +57,14 @@ std::vector<uint8_t> QReader::decodeQR() {
   bool found = checkQCodeExists(imgBW);
   if (found) {
     cv::Mat QR = warpToCode(imgBW);
-    std::vector<uint8_t> data = extractBits(QR);
+    std::vector<std::vector<bool> > data = extractBits(QR);
   }
 }
 
 cv::Mat QReader::captureImage() {
-  std::string fileLocation = "../Test/QRCode2.jpg";
+  std::string fileLocation =
+      "/home/mayavan/catkin_ws/src/package_identification_using_turtlebot/Test/"
+      "QRCodeTest.png";
   cv::Mat img = cv::imread(fileLocation);
   cv::Mat imgBW;
   cv::cvtColor(img, imgBW, CV_BGR2GRAY);
@@ -532,23 +534,82 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
  *
  * @return Returns the warped QR code.
  */
-std::vector<uint8_t> QReader::extractBits(cv::Mat& marker) {
+std::vector<std::vector<bool> > QReader::extractBits(cv::Mat& marker) {
   const int width = marker.cols;
   const int height = marker.rows;
 
-  std::vector<uint8_t> data;
+  std::vector<std::vector<bool> > code;
   for (int y = 0; y < height; y++) {
     const uchar* ptr = marker.ptr<uchar>(y);
+    std::vector<bool> row;
     for (int x = 0; x < width; x++) {
       if (ptr[x] > 128) {
-        std::cout << "1";
-        data.push_back(1);
+        row.push_back(true);
       } else {
-        std::cout << "0";
-        data.push_back(0);
+        row.push_back(false);
       }
     }
-    std::cout << std::endl;
+    code.push_back(row);
   }
-  return data;
+  return code;
+}
+
+/**
+ * @brief Finds the mask used in the code and unmask the QR code
+ * @param code The QR code in binary form
+ * @return none
+ */
+void QReader::unmask(std::vector<std::vector<bool> >& code) {
+  // find the mask used by accessing (8,2),(8,3) & (8,4)
+  int mask;
+  mask = code[8][2] ? 4 : 0;
+  mask += code[8][3] ? 2 : 0;
+  mask += code[8][4] ? 1 : 0;
+
+  for (int i = 9; i < 21; i++) {
+    for (int j = 13; j < 21; j++) {
+      switch (mask) {
+        case 0:
+          if (j % 3 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 1:
+          if ((i + j) % 3 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 2:
+          if ((i + j) % 2 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 3:
+          if (i % 2 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 4:
+          if (((i * j) % 3 + i * j) % 2 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 5:
+          if (((i * j) % 3 + i + j) % 2 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 6:
+          if ((i / 2 + j / 3) % 2 == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+        case 7:
+          if (((i * j) % 2 + (i * j) % 3) == 0) {
+            code[i][j] = !code[i][j];
+          }
+          break;
+      }
+    }
+  }
 }
