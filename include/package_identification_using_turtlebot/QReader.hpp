@@ -28,6 +28,7 @@ class QReader {
 
   float columnCenterEstimate(std::vector<int>, int);
   cv::Mat warpToCode(cv::Mat&);
-  std::vector<uint8_t> extractBits(cv::Mat&);
+  std::vector<std::vector<bool> > extractBits(cv::Mat&);
   std::vector<char> decodeBits(std::vector<uint8_t>);
+  void unmask(std::vector<std::vector<bool> >&);
 };
