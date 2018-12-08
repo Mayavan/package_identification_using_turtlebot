@@ -50,21 +50,47 @@ QReader::QReader() {}
  */
 QReader::~QReader() {}
 
+/**
+ * @brief A function to get the raw image, find the QR code, unmask the QR code
+ * and decode the QR code in the image to extract data of package ID.
+ *
+ * @param none
+ *
+ * @return Bytes containing the data in QR code in UTF-8 format
+ */
 std::vector<uint8_t> QReader::decodeQR() {
   possibleCenters.clear();
   estimatedModuleSize.clear();
+  ROS_INFO_STREAM("Capturing Image");
   cv::Mat imgBW = captureImage();
+  ROS_INFO_STREAM("Checking QR code exisitence");
   bool found = checkQCodeExists(imgBW);
+  std::vector<uint8_t> bytes;
   if (found) {
+    ROS_INFO_STREAM("QR Code exisits");
     cv::Mat QR = warpToCode(imgBW);
-    std::vector<std::vector<bool> > data = extractBits(QR);
+    std::vector<std::vector<bool> > bitMatrix = extractBits(QR);
+
+    unmask(bitMatrix);
+
+    bytes = decodeArray(bitMatrix);
   }
+  return bytes;
 }
 
+/**
+ * @brief A function to capture image from the robots camera and create a
+ * cv::Mat of the image in black and white.
+ *
+ * @param none
+ *
+ * @return black and white image in cv::Mat format
+ */
 cv::Mat QReader::captureImage() {
   std::string fileLocation =
-      "/home/mayavan/catkin_ws/src/package_identification_using_turtlebot/Test/"
-      "QRCodeTest.png";
+      "/home/mayavan/catkin_ws/src/package_identification_using_turtlebot/"
+      "test/"  // TODO(mayavan): use CV bridge to get image
+      "pack2.png";
   cv::Mat img = cv::imread(fileLocation);
   cv::Mat imgBW;
   cv::cvtColor(img, imgBW, CV_BGR2GRAY);
@@ -139,6 +165,7 @@ bool QReader::checkQCodeExists(cv::Mat& img) {
     }
   }
   if (possibleCenters.size() != 3) {
+    ROS_INFO_STREAM("Cannot find three centers");
     return false;
   } else {
     return true;
@@ -556,60 +583,146 @@ std::vector<std::vector<bool> > QReader::extractBits(cv::Mat& marker) {
 
 /**
  * @brief Finds the mask used in the code and unmask the QR code
- * @param code The QR code in binary form
+ * @param code The masked QR code in binary form
  * @return none
  */
 void QReader::unmask(std::vector<std::vector<bool> >& code) {
-  // find the mask used by accessing (8,2),(8,3) & (8,4)
+  // Find the mask used by accessing (8,2),(8,3) & (8,4)
   int mask;
   mask = code[8][2] ? 4 : 0;
   mask += code[8][3] ? 2 : 0;
   mask += code[8][4] ? 1 : 0;
 
-  for (int i = 9; i < 21; i++) {
-    for (int j = 13; j < 21; j++) {
+  for (int i = 0; i < 21; i++) {
+    for (int j = 0; j < 21; j++) {
       switch (mask) {
         case 0:
-          if (j % 3 == 0) {
+          if (j % 3 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 1:
-          if ((i + j) % 3 == 0) {
+          if ((i + j) % 3 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 2:
-          if ((i + j) % 2 == 0) {
+          if ((i + j) % 2 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 3:
-          if (i % 2 == 0) {
+          if (i % 2 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 4:
-          if (((i * j) % 3 + i * j) % 2 == 0) {
+          if (((i * j) % 3 + i * j) % 2 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 5:
-          if (((i * j) % 3 + i + j) % 2 == 0) {
+          if (((i * j) % 3 + i + j) % 2 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 6:
-          if ((i / 2 + j / 3) % 2 == 0) {
+          if ((i / 2 + j / 3) % 2 != 0) {
             code[i][j] = !code[i][j];
           }
           break;
         case 7:
-          if (((i * j) % 2 + (i * j) % 3) == 0) {
+          if (((i * j) % 2 + (i * j) % 3) != 0) {
             code[i][j] = !code[i][j];
           }
           break;
       }
     }
   }
+}
+
+/**
+ * @brief Decodes the data from the unmasked QR code array
+ * @param Code The unmasked QR code in binary form
+ * @return Byte array of the data stored in QR code
+ */
+std::vector<uint8_t> QReader::decodeArray(
+    const std::vector<std::vector<bool> >& code) {
+  std::vector<bool> bitstream;
+  // Converting the code into a bit stream
+
+  // Get transpose of the code matrix
+  std::vector<std::vector<bool> > transpose;
+  for (int i = 0; i < 21; i++) {
+    std::vector<bool> column;
+    for (auto row : code) column.push_back(*(row.begin() + i));
+    transpose.push_back(column);
+  }
+  auto index = transpose.size() - 1;
+  // loop every consecutive columns from the last column
+  for (auto col = transpose.rbegin(); col != (transpose.rend() - 11);
+       col += 2, index -= 2) {
+    auto colPrevious = col + 1;
+    // If half of column index is even, traverse up from bottom
+    if ((index / 2) % 2 == 0) {
+      auto leftBitIterator = (*colPrevious).rbegin();
+      for (auto rightBitIterator = (*col).rbegin();
+           rightBitIterator != ((*col).rend() - 9); rightBitIterator++) {
+        bitstream.push_back(*rightBitIterator);
+        bitstream.push_back(*leftBitIterator);
+        leftBitIterator++;
+      }
+    } else {  // If half of column index is odd, traverse down from top
+      auto leftBitIterator = (*colPrevious).begin() + 9;
+      for (auto rightBitIterator = (*col).begin() + 9;
+           rightBitIterator != (*col).end(); rightBitIterator++) {
+        bitstream.push_back(*rightBitIterator);
+        bitstream.push_back(*leftBitIterator);
+        leftBitIterator++;
+      }
+    }
+  }
+
+  // Bitstream iterator for decoding
+  auto currentBit = bitstream.begin();
+  int encoding = getNumberValue(currentBit, 4);
+
+  ROS_INFO_STREAM("Encoding Used in QR code:" << encoding);
+  if (encoding != 4) {
+    ROS_INFO_STREAM("Encoding not supported");
+    std::vector<uint8_t> unknown(7, 0);
+    // Return decoded value to unknown
+    unknown = {0x75, 0x6E, 0x6B, 0x6E, 0x6F, 0x77, 0x6E};
+    return unknown;
+  }
+  int length = getNumberValue(currentBit, 8);
+  ROS_INFO_STREAM("Length of data in QR code:" << length);
+
+  std::vector<uint8_t> bytes;
+  while (length != 0) {
+    bytes.push_back(getNumberValue(currentBit, 8));
+    length--;
+  }
+  return bytes;
+}
+
+/**
+ * @brief Converts the bitstream of given length starting from the given
+ * iterator to integer and also advances the iterator past the used bits.
+ *
+ * @param currentBit Iterator of the starting bit.
+ *
+ * @param length number of bit to use from the bit stream
+ *
+ * @return Integer value of the bitstream
+ */
+uint8_t QReader::getNumberValue(std::vector<bool>::iterator& currentBit,
+                                unsigned int length) {
+  uint8_t value = 0;
+
+  for (int i = length - 1; i >= 0; i--) {
+    value += (*currentBit) * std::pow(2, i);
+    currentBit++;
+  }
+  return value;
 }

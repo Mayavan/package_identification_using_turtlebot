@@ -1,4 +1,5 @@
 #include <math.h>
+#include <ros/console.h>
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -31,4 +32,6 @@ class QReader {
   std::vector<std::vector<bool> > extractBits(cv::Mat&);
   std::vector<char> decodeBits(std::vector<uint8_t>);
   void unmask(std::vector<std::vector<bool> >&);
+  std::vector<uint8_t> decodeArray(const std::vector<std::vector<bool> >&);
+  uint8_t getNumberValue(std::vector<bool>::iterator&, unsigned int);
 };

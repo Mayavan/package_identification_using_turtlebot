@@ -48,7 +48,9 @@ int main(int argc, char **argv) {
 
   // Initialization
   QReader reader;
-  reader.decodeQR();
+  std::vector<uint8_t> bytes = reader.decodeQR();
+  for (auto i : bytes) std::cout << i;
+  std::cout << std::endl;
 
   return 0;
 }
