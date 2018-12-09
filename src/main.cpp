@@ -38,19 +38,16 @@
  */
 
 #include "package_identification_using_turtlebot/QReader.hpp"
+#include "package_identification_using_turtlebot/PathPlanner.hpp"
 
 #include <ros/ros.h>
 
 int main(int argc, char **argv) {
+
   ros::init(argc, argv, "QBot");
-
   ros::NodeHandle node;
-
   // Initialization
-  QReader reader;
-  std::vector<uint8_t> bytes = reader.decodeQR();
-  for (auto i : bytes) std::cout << i;
-  std::cout << std::endl;
-
+  PathPlanner planner;
+  planner.sendGoals();
   return 0;
 }

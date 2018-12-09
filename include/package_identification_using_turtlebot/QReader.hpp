@@ -7,17 +7,26 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
 
 class QReader {
  public:
   QReader();
   ~QReader();
+  void imageCb(const sensor_msgs::ImageConstPtr& msg);
   std::vector<uint8_t> decodeQR();
+  image_transport::Subscriber imgSub;
 
  private:
+  ros::NodeHandle nh;
+  cv::Mat img;
   std::vector<cv::Point2f> possibleCenters;
   std::vector<float> estimatedModuleSize;
   int dimension = 21;
+  image_transport::ImageTransport it;
+
 
   cv::Mat captureImage();
   bool checkQCodeExists(cv::Mat&);

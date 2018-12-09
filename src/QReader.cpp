@@ -39,16 +39,44 @@
  */
 
 #include "package_identification_using_turtlebot/QReader.hpp"
+#include "package_identification_using_turtlebot/PathPlanner.hpp"
 
 /**
  * @brief  Constructs a object
  */
-QReader::QReader() {}
+QReader::QReader()
+    : it(nh) {
+  ROS_INFO("Inside QReader Constructor");
+  imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb,
+                             this);
+  cv::namedWindow("Image Window");
+
+}
 
 /**
  * @brief Destroys the object
  */
-QReader::~QReader() {}
+QReader::~QReader() {
+  cv::destroyWindow("Image Window");
+}
+
+void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
+  cv_bridge::CvImagePtr cvPtr;
+  try {
+    cvPtr = cv_bridge::toCvCopy(msg, sensor_msgs::image_encodings::BGR8);
+    ROS_INFO("Inside image callback");
+  } catch (cv_bridge::Exception& e) {
+    ROS_ERROR("cv_bridge exception: %s", e.what());
+    return;
+  }
+  img = cvPtr->image;
+//  std::vector<uint8_t> bytes = decodeQR();
+//  for (auto i : bytes)
+//    std::cout << i;
+//  std::cout << std::endl;
+  cv::imshow("Image Window", img);
+  cv::waitKey(3);
+}
 
 /**
  * @brief A function to get the raw image, find the QR code, unmask the QR code
@@ -59,11 +87,12 @@ QReader::~QReader() {}
  * @return Bytes containing the data in QR code in UTF-8 format
  */
 std::vector<uint8_t> QReader::decodeQR() {
+  ros::Duration(3.0).sleep();
   possibleCenters.clear();
   estimatedModuleSize.clear();
   ROS_INFO_STREAM("Capturing Image");
   cv::Mat imgBW = captureImage();
-  ROS_INFO_STREAM("Checking QR code exisitence");
+  ROS_INFO_STREAM("Checking QR code existence");
   bool found = checkQCodeExists(imgBW);
   std::vector<uint8_t> bytes;
   if (found) {
@@ -87,11 +116,10 @@ std::vector<uint8_t> QReader::decodeQR() {
  * @return black and white image in cv::Mat format
  */
 cv::Mat QReader::captureImage() {
-  std::string fileLocation =
-      "/home/mayavan/catkin_ws/src/package_identification_using_turtlebot/"
-      "test/"  // TODO(mayavan): use CV bridge to get image
-      "pack2.png";
-  cv::Mat img = cv::imread(fileLocation);
+//  std::string fileLocation =
+//      "/home/adarshjs/ros_software_ws/src/package_identification_using_turtlebot/test/pack2.png";
+//  cv::Mat img = cv::imread(fileLocation);
+
   cv::Mat imgBW;
   cv::cvtColor(img, imgBW, CV_BGR2GRAY);
   cv::adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
