@@ -5,27 +5,27 @@
       <author>Blender User</author>
       <authoring_tool>Blender 2.79.0</authoring_tool>
     </contributor>
-    <created>2018-12-09T05:37:29</created>
-    <modified>2018-12-09T05:37:29</modified>
+    <created>2018-12-09T05:47:24</created>
+    <modified>2018-12-09T05:47:24</modified>
     <unit name="meter" meter="1"/>
     <up_axis>Z_UP</up_axis>
   </asset>
   <library_images>
-    <image id="pack1_png" name="pack1_png">
-      <init_from>pack1.png</init_from>
+    <image id="pack4_png" name="pack4_png">
+      <init_from>pack4.png</init_from>
     </image>
   </library_images>
   <library_effects>
     <effect id="Material_001-effect">
       <profile_COMMON>
-        <newparam sid="pack1_png-surface">
+        <newparam sid="pack4_png-surface">
           <surface type="2D">
-            <init_from>pack1_png</init_from>
+            <init_from>pack4_png</init_from>
           </surface>
         </newparam>
-        <newparam sid="pack1_png-sampler">
+        <newparam sid="pack4_png-sampler">
           <sampler2D>
-            <source>pack1_png-surface</source>
+            <source>pack4_png-surface</source>
           </sampler2D>
         </newparam>
         <technique sid="common">
@@ -37,7 +37,7 @@
               <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="pack1_png-sampler"/>
+              <texture texture="pack4_png-sampler"/>
             </diffuse>
             <specular>
               <color sid="specular">0.5 0.5 0.5 1</color>
