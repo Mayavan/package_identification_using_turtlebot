@@ -27,12 +27,12 @@ catkin_package()
 include_directories(include ${catkin_INCLUDE_DIRS})
 include_directories( ${OpenCV_INCLUDE_DIRS} )
 
-add_executable(checkCode src/main.cpp src/QReader.cpp src/PathPlanner.cpp)
+add_executable(search src/main.cpp src/QReader.cpp src/PathPlanner.cpp)
 #add_executable(sendGoals src/sendGoals.cpp)
 
-target_include_directories(checkCode PRIVATE ${PYTHON_INCLUDE_DIRS})
+target_include_directories(search PRIVATE ${PYTHON_INCLUDE_DIRS})
 
-target_link_libraries(checkCode ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
+target_link_libraries(search ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
 
 #target_link_libraries(sendGoals ${catkin_LIBRARIES})
 

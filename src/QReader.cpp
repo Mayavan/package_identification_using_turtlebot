@@ -44,21 +44,16 @@
 /**
  * @brief  Constructs a object
  */
-QReader::QReader()
-    : it(nh) {
+QReader::QReader() : it(nh) {
   ROS_INFO("Inside QReader Constructor");
-  imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb,
-                             this);
+  imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb, this);
   cv::namedWindow("Image Window");
-
 }
 
 /**
  * @brief Destroys the object
  */
-QReader::~QReader() {
-  cv::destroyWindow("Image Window");
-}
+QReader::~QReader() { cv::destroyWindow("Image Window"); }
 
 void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
   cv_bridge::CvImagePtr cvPtr;
@@ -70,10 +65,10 @@ void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
     return;
   }
   img = cvPtr->image;
-//  std::vector<uint8_t> bytes = decodeQR();
-//  for (auto i : bytes)
-//    std::cout << i;
-//  std::cout << std::endl;
+  //  std::vector<uint8_t> bytes = decodeQR();
+  //  for (auto i : bytes)
+  //    std::cout << i;
+  //  std::cout << std::endl;
   cv::imshow("Image Window", img);
   cv::waitKey(3);
 }
@@ -116,9 +111,9 @@ std::vector<uint8_t> QReader::decodeQR() {
  * @return black and white image in cv::Mat format
  */
 cv::Mat QReader::captureImage() {
-//  std::string fileLocation =
-//      "/home/adarshjs/ros_software_ws/src/package_identification_using_turtlebot/test/pack2.png";
-//  cv::Mat img = cv::imread(fileLocation);
+  //  std::string fileLocation =
+  //      "/home/adarshjs/ros_software_ws/src/package_identification_using_turtlebot/test/pack2.png";
+  //  cv::Mat img = cv::imread(fileLocation);
 
   cv::Mat imgBW;
   cv::cvtColor(img, imgBW, CV_BGR2GRAY);
@@ -563,22 +558,50 @@ float QReader::columnCenterEstimate(std::vector<int> stateCount, int end) {
  * @return Returns the warped QR code.
  */
 cv::Mat QReader::warpToCode(cv::Mat& img) {
-  // This is the smallest QR code and does not have have an alignment marker
-  cv::Point2f ptBottomRight =
-      possibleCenters[1] - possibleCenters[0] + possibleCenters[2];
-  possibleCenters.push_back(ptBottomRight);
+  // Sort centers based on positions to find the corners
+  std::sort(
+      possibleCenters.begin(), possibleCenters.end(),
+      [](const cv::Point2f& a, const cv::Point2f& b) { return a.x < b.x; });
+  cv::Point2f topRight = possibleCenters[2];
+
+  std::sort(
+      possibleCenters.begin(), possibleCenters.end(),
+      [](const cv::Point2f& a, const cv::Point2f& b) { return a.y < b.y; });
+  std::cout << "bottomLeft" << possibleCenters[2].y << std::endl;
+  cv::Point2f bottomLeft = possibleCenters[2];
+
+  cv::Point2f topLeft = possibleCenters[0].x < possibleCenters[1].x
+                            ? possibleCenters[0]
+                            : possibleCenters[1];
+
+  cv::Point2f bottomRight = topRight - topLeft + bottomLeft;
+
+  std::vector<cv::Point2f> corners;
+  corners.push_back(topLeft);
+  corners.push_back(topRight);
+  corners.push_back(bottomLeft);
+  corners.push_back(bottomRight);
+
+  int sum_of_elems = 0;
+  for (auto& n : estimatedModuleSize) sum_of_elems += n;
+
+  int moduleSize = sum_of_elems / estimatedModuleSize.size();
+  float factor = 3.5f * moduleSize;
+  int dimensionQR = dimension * moduleSize;
 
   std::vector<cv::Point2f> src;
-  src.push_back(cv::Point2f(3.5f, 3.5f));
-  src.push_back(cv::Point2f(dimension - 3.5f, 3.5f));
-  src.push_back(cv::Point2f(3.5f, dimension - 3.5f));
-  src.push_back(cv::Point2f(dimension - 3.5f, dimension - 3.5f));
+  src.push_back(cv::Point2f(factor, factor));
+  src.push_back(cv::Point2f(dimensionQR - factor, factor));
+  src.push_back(cv::Point2f(factor, dimensionQR - factor));
+  src.push_back(cv::Point2f(dimensionQR - factor, dimensionQR - factor));
 
-  // Warp the image
-  cv::Mat transform = getPerspectiveTransform(possibleCenters, src);
+  // Warp the image to only the QR code
+  cv::Mat transform = getPerspectiveTransform(corners, src);
   cv::Mat output;
-  warpPerspective(img, output, transform, cv::Size(dimension, dimension),
+  warpPerspective(img, output, transform, cv::Size(dimensionQR, dimensionQR),
                   cv::INTER_NEAREST);
+  cv::resize(output, output, cv::Size(dimension, dimension));
+
   return output;
 }
 
