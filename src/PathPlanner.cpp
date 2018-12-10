@@ -8,24 +8,19 @@
 #include "package_identification_using_turtlebot/QReader.hpp"
 
 PathPlanner::PathPlanner() {
-  initPosePub = nh
-      .advertise<geometry_msgs::PoseWithCovarianceStamped>(
+  initPosePub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
       "/initialpose", 1000);
   initialPose.header.frame_id = "map";
   goal.target_pose.header.frame_id = "map";
   initialPose.pose.pose.position.x = 0.0;
   initialPose.pose.pose.position.y = 0.0;
   initialPose.pose.pose.orientation.w = 1.0;
-  goalPoints = { {0, 0}, {1, 1}, {2, 1},
-    { 2, 2}};
+  goalPoints = {{0, 0}, {1, 1}, {2, 1}, {2, 2}};
   counter = 0;
   reachedGoal = false;
-
 }
 
-PathPlanner::~PathPlanner() {
-
-}
+PathPlanner::~PathPlanner() {}
 
 void PathPlanner::publishInitPose(double x, double y, double w) {
   initialPose.pose.pose.position.x = x;
@@ -39,14 +34,14 @@ void PathPlanner::sendGoals() {
                                                                    true);
   QReader reader;
 
-  //wait for the action server to come up
+  // Wait for the action server to come up
   while (!ac.waitForServer(ros::Duration(5.0))) {
     ROS_INFO("Waiting for the move_base action server to come up");
   }
 
-  // Publish initial position (x, y) and orientation quaternion of the Turtlebot.
-  // In this case (x, y) = (-3.0, -3.0) and w of quaternion = 1.0 (0 degrees)
-  // All other parameters are 0.0 by default
+  // Publish initial position (x, y) and orientation quaternion of the
+  // Turtlebot. In this case (x, y) = (-3.0, -3.0) and w of quaternion = 1.0 (0
+  // degrees) All other parameters are 0.0 by default
   publishInitPose(-3.0, -3.0, 1.0);
 
   goal.target_pose.header.stamp = ros::Time::now();
@@ -65,18 +60,11 @@ void PathPlanner::sendGoals() {
       ROS_INFO("Goal reached.");
       reachedGoal = true;
       std::vector<uint8_t> bytes = reader.decodeQR();
-      for (auto i : bytes)
-        std::cout << i;
+      for (auto i : bytes) std::cout << i;
       std::cout << std::endl;
     } else
       ROS_INFO("Failed to reach goal");
   }
 }
 
-bool PathPlanner::returnReachedGoal() {
-  return reachedGoal;
-}
-
-
-
-
+bool PathPlanner::returnReachedGoal() { return reachedGoal; }
