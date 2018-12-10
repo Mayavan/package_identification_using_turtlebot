@@ -41,18 +41,12 @@
 #include "package_identification_using_turtlebot/QReader.hpp"
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 
-/**
- * @brief  Constructs a object
- */
 QReader::QReader() : it(nh) {
   ROS_INFO("Inside QReader Constructor");
   imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb, this);
   cv::namedWindow("Image Window");
 }
 
-/**
- * @brief Destroys the object
- */
 QReader::~QReader() { cv::destroyWindow("Image Window"); }
 
 void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
@@ -65,34 +59,26 @@ void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
     return;
   }
   img = cvPtr->image;
-  //  std::vector<uint8_t> bytes = decodeQR();
-  //  for (auto i : bytes)
-  //    std::cout << i;
-  //  std::cout << std::endl;
+
   cv::imshow("Image Window", img);
   cv::waitKey(3);
 }
 
-/**
- * @brief A function to get the raw image, find the QR code, unmask the QR code
- * and decode the QR code in the image to extract data of package ID.
- *
- * @param none
- *
- * @return Bytes containing the data in QR code in UTF-8 format
- */
 std::vector<uint8_t> QReader::decodeQR() {
   ros::Duration(3.0).sleep();
   possibleCenters.clear();
   estimatedModuleSize.clear();
-  ROS_INFO_STREAM("Capturing Image");
-  cv::Mat imgBW = captureImage();
+  ROS_INFO_STREAM("Decoding Image");
+  // Convert image to black and white
+  cv::cvtColor(img, img, CV_BGR2GRAY);
+  cv::adaptiveThreshold(img, img, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
+                        CV_THRESH_BINARY, 51, 0);
   ROS_INFO_STREAM("Checking QR code existence");
-  bool found = checkQCodeExists(imgBW);
+  bool found = checkQCodeExists(img);
   std::vector<uint8_t> bytes;
   if (found) {
     ROS_INFO_STREAM("QR Code exisits");
-    cv::Mat QR = warpToCode(imgBW);
+    cv::Mat QR = warpToCode(img);
     std::vector<std::vector<bool> > bitMatrix = extractBits(QR);
 
     unmask(bitMatrix);
@@ -102,36 +88,6 @@ std::vector<uint8_t> QReader::decodeQR() {
   return bytes;
 }
 
-/**
- * @brief A function to capture image from the robots camera and create a
- * cv::Mat of the image in black and white.
- *
- * @param none
- *
- * @return black and white image in cv::Mat format
- */
-cv::Mat QReader::captureImage() {
-  //  std::string fileLocation =
-  //      "/home/adarshjs/ros_software_ws/src/package_identification_using_turtlebot/test/pack2.png";
-  //  cv::Mat img = cv::imread(fileLocation);
-
-  cv::Mat imgBW;
-  cv::cvtColor(img, imgBW, CV_BGR2GRAY);
-  cv::adaptiveThreshold(imgBW, imgBW, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
-                        CV_THRESH_BINARY, 51, 0);
-  return imgBW;
-}
-
-/**
- * @brief A function to check if QR code exists in the image.
- *
- * @detail The QR code has 3 finder patterns. This functions looks for a
- * sequence of pixels which transitions from white to black.
- *
- * @param img Input image to check for QR code
- *
- * @return true if the image has a QR code in it, else returns false
- */
 bool QReader::checkQCodeExists(cv::Mat& img) {
   int skipRows = 3;
   std::vector<int> stateCount(5, 0);
@@ -195,14 +151,6 @@ bool QReader::checkQCodeExists(cv::Mat& img) {
   }
 }
 
-/**
- * @brief checks if the number of pixels in each states are in the ratio
- * 1:1:3:1:1
- * @param stateCount vector containing the number of pixels with black or white
- * pixels
- * @return true if the number of pixels in each states are in the ratio
- * 1:1:3:1:1 or false
- */
 bool QReader::checkRatio(std::vector<int> stateCount) {
   int totalCount = 0;
   // find the total cols in stateCount
@@ -224,17 +172,6 @@ bool QReader::checkRatio(std::vector<int> stateCount) {
           (abs(moduleSize - (stateCount[4])) < tolerance));
 }
 
-/**
- * @brief Ensure if the given part of the image has finder pattern
- *
- * @param img input image
- * @param stateCount vector of number of pixels in each transitions from white
- * to black or black to white pixels
- * @param row row number of the pixel in the image
- * @param col column number of the pixel in the image
- *
- * @return false if the row or column goes out of limits or true if it is not
- */
 bool QReader::isFinderPattern(const cv::Mat& img, std::vector<int> stateCount,
                               int row, int col) {
   int totalCount = 0;
@@ -294,17 +231,6 @@ bool QReader::isFinderPattern(const cv::Mat& img, std::vector<int> stateCount,
   return true;
 }
 
-/**
- * @brief Find the center point in the vertical direction
- *
- * @param img input image
- * @param startRow Row number of the pixel in the image
- * @param centerCol Estimate of center pixel in the column
- * @param centerCount Number of pixels in the length of center square
- * @param totalCount Number of pixels in the length of the whole finder pattern
- *
- * @return The center of the finder pattern in the vertical direction
- */
 float QReader::checkVertical(const cv::Mat& img, int startRow, int centerCol,
                              int centerCount, int totalCount) {
   int maxRows = img.rows;
@@ -375,18 +301,6 @@ float QReader::checkVertical(const cv::Mat& img, int startRow, int centerCol,
   }
 }
 
-/**
- * @brief Find the center point in the horizontal direction
- *
- * @param img input image
- * @param centerRow Center of the finder pattern in the vertical direction
- * @param startCol Column number of the pixel in the image
- * @param centerCol Estimate of center pixel in the column
- * @param centerCount Number of pixels in the length of center square
- * @param totalCount Number of pixels in the length of the whole finder pattern
- *
- * @return The center of the finder pattern in the horizontal direction
- */
 float QReader::checkHorizontal(const cv::Mat& img, int centerRow, int startCol,
                                int centerCount, int totalCount) {
   int maxCols = img.cols;
@@ -454,17 +368,6 @@ float QReader::checkHorizontal(const cv::Mat& img, int centerRow, int startCol,
   }
 }
 
-/**
- * @brief Find the center point in the horizontal direction
- *
- * @param img input image
- * @param centerRow Center of the finder pattern in the vertical direction
- * @param centerCol Center of the finder pattern in the horizontal direction
- * @param maxCount Number of pixels in the length of center square
- * @param totalCount Number of pixels in the length of the whole finder pattern
- *
- * @return The center of the finder pattern in the horizontal direction
- */
 bool QReader::checkDiagonal(const cv::Mat& img, float centerRow,
                             float centerCol, int maxCount, int totalCount) {
   std::vector<int> stateCount(5, 0);
@@ -538,25 +441,11 @@ bool QReader::checkDiagonal(const cv::Mat& img, float centerRow,
   return possible;
 }
 
-/**
- * @brief Calculate center center pixel in the column of finder pattern
- * @param stateCount Vector containing the number of pixels with black or white
- * pixels
- * @param end Last column
- * @return Estimate of the center of the finder pattern in the column
- */
 float QReader::columnCenterEstimate(std::vector<int> stateCount, int end) {
   float mid = (end - stateCount[4] - stateCount[3]) - stateCount[2] / 2.0f;
   return mid;
 }
 
-/**
- * @brief Warps the QR code to a flat perspective of only the QR Code.
- *
- * @param img The image to be warped.
- *
- * @return Returns the warped QR code.
- */
 cv::Mat QReader::warpToCode(cv::Mat& img) {
   // Sort centers based on positions to find the corners
   std::sort(
@@ -605,13 +494,6 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
   return output;
 }
 
-/**
- * @brief Warped image of the QR code.
- *
- * @param marker The image from which bits have to be extracted.
- *
- * @return Returns the warped QR code.
- */
 std::vector<std::vector<bool> > QReader::extractBits(cv::Mat& marker) {
   const int width = marker.cols;
   const int height = marker.rows;
@@ -632,11 +514,6 @@ std::vector<std::vector<bool> > QReader::extractBits(cv::Mat& marker) {
   return code;
 }
 
-/**
- * @brief Finds the mask used in the code and unmask the QR code
- * @param code The masked QR code in binary form
- * @return none
- */
 void QReader::unmask(std::vector<std::vector<bool> >& code) {
   // Find the mask used by accessing (8,2),(8,3) & (8,4)
   int mask;
@@ -692,11 +569,6 @@ void QReader::unmask(std::vector<std::vector<bool> >& code) {
   }
 }
 
-/**
- * @brief Decodes the data from the unmasked QR code array
- * @param Code The unmasked QR code in binary form
- * @return Byte array of the data stored in QR code
- */
 std::vector<uint8_t> QReader::decodeArray(
     const std::vector<std::vector<bool> >& code) {
   std::vector<bool> bitstream;
@@ -757,16 +629,6 @@ std::vector<uint8_t> QReader::decodeArray(
   return bytes;
 }
 
-/**
- * @brief Converts the bitstream of given length starting from the given
- * iterator to integer and also advances the iterator past the used bits.
- *
- * @param currentBit Iterator of the starting bit.
- *
- * @param length number of bit to use from the bit stream
- *
- * @return Integer value of the bitstream
- */
 uint8_t QReader::getNumberValue(std::vector<bool>::iterator& currentBit,
                                 unsigned int length) {
   uint8_t value = 0;
