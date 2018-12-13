@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle node;
   // Initialization
   PathPlanner planner;
-  planner.sendGoals();
+  planner.findPackage();
 //  QReader reader;
 //  ros::spin();
   return 0;

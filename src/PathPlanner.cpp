@@ -15,7 +15,7 @@ PathPlanner::PathPlanner() {
   initialPose.pose.pose.position.x = 0.0;
   initialPose.pose.pose.position.y = 0.0;
   initialPose.pose.pose.orientation.w = 1.0;
-  goalPoints = { {2.4, 0.30, 0.1, 0.9}, {2.4, 1.808, 0.0, 1.0}, {2.3, 3.2, 0.1, 0.9}, {2.4, 4.36, 0.0, 1.0}, {0.0,0.0, 0.0, 1.0}};
+  goalPoints = { {2.4, 0.30, 0.1, 0.9}, {2.5, 1.808, 0.0, 1.0}, {2.4, 3.175, 0.0, 1.0}, {2.4, 4.36, 0.0, 1.0}, {0.0,0.0, 0.0, 1.0}};
   counter = 0;
   reachedGoal = false;
 }
@@ -29,11 +29,11 @@ void PathPlanner::publishInitPose(double x, double y, double w) {
   initPosePub.publish(initialPose);
 }
 
-void PathPlanner::sendGoals() {
+std::vector<std::string> PathPlanner::sendGoals() {
   actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base",
                                                                    true);
   QReader reader;
-
+  std::vector<std::string> packID;
   // Wait for the action server to come up
   while (!ac.waitForServer(ros::Duration(5.0))) {
     ROS_INFO("Waiting for the move_base action server to come up");
@@ -61,30 +61,52 @@ void PathPlanner::sendGoals() {
       counter = counter + 1;
       ROS_INFO("Reached goal %d \n", counter);
 
-      // TODO: add if condition with counter for exit condition
-
-      // Call image callback
-      ros::spinOnce();
-      std::vector<uint8_t> result = reader.returnBytes();
-      std::string str;
-      str.assign(result.begin(), result.end());
-      ROS_INFO("Package ID is: %s \n", str.c_str());
-
-      // wait until package is detected
-      while (str.substr(0, 4) != "pack") {
+      if (counter == goalPoints.size()) {
+        break;
+      } else {
+        // Call image callback
         ros::spinOnce();
-        result = reader.returnBytes();
+        std::vector<uint8_t> result = reader.returnBytes();
+        std::string str;
         str.assign(result.begin(), result.end());
+        ROS_INFO("Package ID is: %s \n", str.c_str());
+
         if (str.substr(0, 4) == "pack") {
-          ROS_INFO("QR code detected! \n");
-          ROS_INFO("Package ID is: %s \n", str.c_str());
-          break;
+          packID.push_back(str);
         }
-        ROS_INFO("Waiting for QR code to be detected \n");
+
+        // wait until package is detected
+        while (str.substr(0, 4) != "pack") {
+          ros::spinOnce();
+          result = reader.returnBytes();
+          str.assign(result.begin(), result.end());
+          if (str.substr(0, 4) == "pack") {
+            ROS_INFO("QR code detected! \n");
+            ROS_INFO("Package ID is: %s \n", str.c_str());
+            packID.push_back(str);
+            break;
+          }
+          ROS_INFO("Waiting for QR code to be detected \n");
+        }
       }
+
     } else
       ROS_INFO("Failed to reach goal");
   }
+  return packID;
 }
 
-bool PathPlanner::returnReachedGoal() { return reachedGoal; }
+void PathPlanner::findPackage() {
+  std::vector<std::string> packID;
+  packID = sendGoals();
+  auto j = goalPoints.begin();
+  std::cout << "*****************************" << std::endl;
+  std::cout << "******Package Locations******" << std::endl;
+  std::cout << "*****************************" << std::endl;
+  for (auto i = packID.begin(); i != packID.end() && j != goalPoints.end();
+      i++, j++) {
+    std::cout << (*i) << " is in position x=" << (*j).at(0) << " y = "
+              << (*j).at(1) << std::endl;
+  }
+  ros::Duration(10).sleep();
+}

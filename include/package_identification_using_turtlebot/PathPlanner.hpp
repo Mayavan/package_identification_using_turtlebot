@@ -29,8 +29,8 @@ class PathPlanner {
  public:
   PathPlanner();
   ~PathPlanner();
-  void sendGoals();
-  bool returnReachedGoal();
+  std::vector<std::string> sendGoals();
+  void findPackage();
 };
 
 
