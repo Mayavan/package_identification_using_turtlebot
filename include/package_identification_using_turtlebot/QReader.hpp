@@ -71,6 +71,8 @@ class QReader {
    * @return None
    */
   void imageCb(const sensor_msgs::ImageConstPtr& msg);
+
+  cv::Mat processFrame();
   /**
    * @brief A function to get the raw image, find the QR code, unmask the QR
    * code and decode the QR code in the image to extract data of package ID.
@@ -86,7 +88,10 @@ class QReader {
    */
   image_transport::Subscriber imgSub;
 
+  std::vector<uint8_t> returnBytes();
+
  private:
+  std::vector<uint8_t> bytes;
   /**
    * Node handle to manage the ros node
    */
