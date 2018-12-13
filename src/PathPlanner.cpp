@@ -15,7 +15,7 @@ PathPlanner::PathPlanner() {
   initialPose.pose.pose.position.x = 0.0;
   initialPose.pose.pose.position.y = 0.0;
   initialPose.pose.pose.orientation.w = 1.0;
-  goalPoints = {{0, 0}, {1, 1}, {2, 1}, {2, 2}};
+  goalPoints = { {2.4, 0.30, 0.1, 0.9}, {2.4, 1.808, 0.0, 1.0}, {2.3, 3.2, 0.1, 0.9}, {2.4, 4.36, 0.0, 1.0}, {0.0,0.0, 0.0, 1.0}};
   counter = 0;
   reachedGoal = false;
 }
@@ -45,23 +45,43 @@ void PathPlanner::sendGoals() {
   publishInitPose(-3.0, -3.0, 1.0);
 
   goal.target_pose.header.stamp = ros::Time::now();
-  for (int i = 0; i < goalPoints.size() && counter < goalPoints.size(); i++) {
-    std::cout << goalPoints[i][0] << "  " << goalPoints[i][1] << std::endl;
-    goal.target_pose.pose.position.x = goalPoints[i][0];
-    goal.target_pose.pose.position.y = goalPoints[i][1];
-    goal.target_pose.pose.orientation.w = 1.0;
+  for (auto i = goalPoints.begin();
+      i != goalPoints.end() && counter < goalPoints.size(); i++) {
+    ROS_INFO("Moving to goal %d \n", counter + 1);
+    goal.target_pose.pose.position.x = (*i).at(0);
+    goal.target_pose.pose.position.y = (*i).at(1);
+    goal.target_pose.pose.orientation.z = (*i).at(2);
+    goal.target_pose.pose.orientation.w = (*i).at(3);
 
     ROS_INFO("Sending goal");
     ac.sendGoal(goal);
     ac.waitForResult();
-    ros::spinOnce();
+
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
       counter = counter + 1;
-      ROS_INFO("Goal reached.");
-      reachedGoal = true;
-      std::vector<uint8_t> bytes = reader.decodeQR();
-      for (auto i : bytes) std::cout << i;
-      std::cout << std::endl;
+      ROS_INFO("Reached goal %d \n", counter);
+
+      // TODO: add if condition with counter for exit condition
+
+      // Call image callback
+      ros::spinOnce();
+      std::vector<uint8_t> result = reader.returnBytes();
+      std::string str;
+      str.assign(result.begin(), result.end());
+      ROS_INFO("Package ID is: %s \n", str.c_str());
+
+      // wait until package is detected
+      while (str.substr(0, 4) != "pack") {
+        ros::spinOnce();
+        result = reader.returnBytes();
+        str.assign(result.begin(), result.end());
+        if (str.substr(0, 4) == "pack") {
+          ROS_INFO("QR code detected! \n");
+          ROS_INFO("Package ID is: %s \n", str.c_str());
+          break;
+        }
+        ROS_INFO("Waiting for QR code to be detected \n");
+      }
     } else
       ROS_INFO("Failed to reach goal");
   }
