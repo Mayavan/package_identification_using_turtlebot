@@ -1,7 +1,7 @@
 <launch>
 
-  <arg name="x" default="0.0"/>
-  <arg name="y" default="0.0"/>
+  <arg name="x" default="-3.0"/>
+  <arg name="y" default="-3.0"/>
   <arg name="z" default="0.0"/>
 
   <arg name="world_file" default="$(find package_identification_using_turtlebot)/worlds/warehouse.world"/>
@@ -47,6 +47,6 @@
     <remap from="scan" to="/scan"/>
   </node>
 
-  <node pkg="package_identification_using_turtlebot" type="search" name="search"/>
+  <node pkg="package_identification_using_turtlebot" type="search" name="search" output = "screen" launch-prefix = "gnome-terminal -e"/>
 
 </launch>
