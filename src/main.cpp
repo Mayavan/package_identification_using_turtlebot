@@ -49,5 +49,7 @@ int main(int argc, char **argv) {
   // Initialization
   PathPlanner planner;
   planner.sendGoals();
+//  QReader reader;
+//  ros::spin();
   return 0;
 }
