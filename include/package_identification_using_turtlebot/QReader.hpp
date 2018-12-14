@@ -1,7 +1,6 @@
 /**
  * @file QReader.hpp
- * @brief Class to get the image and decode the QR code in the
- * image to extract data of package ID.
+ * @brief File that has declarations for the QReader class
  *
  * @author RajendraMayavan, Adarsh Jagan
  *
@@ -53,6 +52,10 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
+/**
+ * @brief Class QReader has methods to get the image and decode the QR code in the
+ * image to extract data of package ID.
+ */
 class QReader {
  public:
   /**
@@ -94,27 +97,34 @@ class QReader {
   std::vector<uint8_t> returnBytes();
 
  private:
+
+  /**
+   * @brief The decoded bytes from the Qr code
+   */
   std::vector<uint8_t> bytes;
   /**
-   * Node handle to manage the ros node
+   * @brief Node handle to manage the ros node
    */
   ros::NodeHandle nh;
   /**
-   * Image of the QR code
+   * @brief Image of the QR code
    */
   cv::Mat img;
   /**
-   * Estimated centers of a finder pattern
+   * @brief Estimated centers of a finder pattern
    */
   std::vector<cv::Point2f> possibleCenters;
   /**
-   * Number of pixels in each bit of the QR code
+   * @brief Number of pixels in each bit of the QR code
    */
   std::vector<float> estimatedModuleSize;
   /**
-   * Length/Width of QR code
+   * @brief Length/Width of QR code
    */
   int dimension = 21;
+  /**
+   * @brief Image Transport object
+   */
   image_transport::ImageTransport it;
 
   /**

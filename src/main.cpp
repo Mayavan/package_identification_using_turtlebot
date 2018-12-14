@@ -2,8 +2,8 @@
  * @file main.cpp
  * @brief file with main function to start the execution
  *
- * @author RajendraMayavan, Adarsh Jagan
- *
+ * @author RajendraMayavan
+ * @author Adarsh Jagan
  * @copyright BSD-3-Clause License
  * Copyright (c) 2018, Mayavan,  Adarsh Jagan Sathyamoorthy
  *

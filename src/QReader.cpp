@@ -1,9 +1,9 @@
 /**
  * @file QReader.cpp
- * @brief Class to get the image and decode the QR code in the
- * image to extract data of package ID.
+ * @brief File which has the definitions of QReader class methods
  *
- * @author RajendraMayavan, Adarsh Jagan
+ * @author RajendraMayavan
+ * @author Adarsh Jagan
  *
  * @copyright BSD-3-Clause License
  * Copyright (c) 2018, Mayavan,  Adarsh Jagan Sathyamoorthy
