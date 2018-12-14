@@ -113,9 +113,7 @@ TEST(callVisionTest, testPlanner3) {
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
   image_transport::Publisher pub = it.advertise("camera/rgb/image_raw", 1);
-  cv::Mat image =
-      cv::imread(
-          "/home/adarshjs/ros_software_ws/src/package_identification_using_turtlebot/data/pack4.png");
+  cv::Mat image = cv::imread("../data/pack4.png");
   cv::waitKey(3);
   sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8",
                                                  image).toImageMsg();
