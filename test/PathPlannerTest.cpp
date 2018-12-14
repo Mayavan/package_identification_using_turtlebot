@@ -39,7 +39,31 @@
 
 #include <gtest/gtest.h>
 #include <ros/ros.h>
+#include <ros/connection_manager.h>
 #include <vector>
+#include "package_identification_using_turtlebot/PathPlanner.hpp"
+
+class TestPlanner {
+ private:
+  int count;
+  geometry_msgs::PoseWithCovarianceStamped pose;
+
+ public:
+  TestPlanner() {
+    count = 0;
+  }
+  ~TestPlanner() {
+  }
+
+  void testCb(const geometry_msgs::PoseWithCovarianceStamped msg) {
+    ++count;
+    ROS_INFO("%.2f %.2f %.2f", msg.pose.pose.position.x,
+             msg.pose.pose.position.y, msg.pose.pose.orientation.w);
+  }
+  int returnCount() {
+    return count;
+  }
+};
 
 /**
  * @brief      Testing if the path planner works properly
@@ -49,7 +73,36 @@
  *
  * @return     none
  */
-TEST(moveTo, checkPlanner) {
-  // TODO(mayavan): Test condition to be implemented
-  EXPECT_EQ(1, 1);
+TEST(publishInitPoseTest, testPlanner1) {
+  ros::NodeHandle nh;
+  PathPlanner planner( { { 0.0, 0.0, 0.0, 1.0 } });
+  ros::Publisher pub = planner.returnPublisher();
+  TestPlanner test;
+  ros::Subscriber sub = nh.subscribe("/initialpose", 1, &TestPlanner::testCb,
+                                     &test);
+  EXPECT_EQ(pub.getNumSubscribers(), 1U);
+  EXPECT_EQ(sub.getNumPublishers(), 1U);
+  std::vector<double> res = planner.callPublisher(2.0, 1.0, 1.0);
+  ASSERT_EQ(res.at(0), 2.0);
+  ASSERT_EQ(res.at(1), 1.0);
+  ASSERT_EQ(res.at(2), 1.0);
+//  ros::spinOnce();
+//  EXPECT_EQ(test.returnCount(), 1U);
+}
+
+TEST(findPackageTest, testPlanner2) {
+  PathPlanner planner( { { -2.0, -3.0, 0.0, 1.0 }, { -1.0, -2.0, 0.0, 1.0 } });
+  std::vector<std::string> packID;
+  packID.push_back("pack#1");
+  packID.push_back("pack#2");
+  int i = planner.findPackage(packID);
+  ASSERT_EQ(i, 0);
+}
+
+TEST(callVisionTest, testPlanner3) {
+  QReader reader;
+  PathPlanner planner( { { -2.0, -3.0, 0.0, 1.0 }, { -1.0, -2.0, 0.0, 1.0 } });
+  std::vector<std::string> packID;
+  packID = planner.callVision(reader, packID);
+  ASSERT_STREQ("pack#4", (packID.at(0)).c_str());
 }
