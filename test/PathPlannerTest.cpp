@@ -1,8 +1,9 @@
 /**
  * @file PathPlannerTest.cpp
- * @brief file to test the class PathPlanner.cpp
+ * @brief file to test the class PathPlanner
  *
- * @author RajendraMayavan, Adarsh Jagan
+ * @author RajendraMayavan
+ * @author Adarsh Jagan
  *
  * @copyright BSD-3-Clause License
  * Copyright (c) 2018, Mayavan,  Adarsh Jagan Sathyamoorthy
@@ -66,11 +67,9 @@ class TestPlanner {
 };
 
 /**
- * @brief      Testing if the path planner works properly
- *
- * @param[in]     TESTSuite
- * @param[in]     test
- *
+ * @brief      Test to check intiPose publisher
+ * @param[in]  TESTSuite
+ * @param[in]  test
  * @return     none
  */
 TEST(publishInitPoseTest, testPlanner1) {
@@ -90,6 +89,12 @@ TEST(publishInitPoseTest, testPlanner1) {
 //  EXPECT_EQ(test.returnCount(), 1U);
 }
 
+/**
+ * @brief      Test if findPackage executes successfully
+ * @param[in]  TESTSuite
+ * @param[in]  test
+ * @return     none
+ */
 TEST(findPackageTest, testPlanner2) {
   PathPlanner planner( { { -2.0, -3.0, 0.0, 1.0 }, { -1.0, -2.0, 0.0, 1.0 } });
   std::vector<std::string> packID;
@@ -98,11 +103,35 @@ TEST(findPackageTest, testPlanner2) {
   int i = planner.findPackage(packID);
   ASSERT_EQ(i, 0);
 }
-
+/**
+ * @brief      Test to check if QR code is properly detected
+ * @param[in]  TESTSuite
+ * @param[in]  test
+ * @return     none
+ */
 TEST(callVisionTest, testPlanner3) {
+  ros::NodeHandle nh;
+  image_transport::ImageTransport it(nh);
+  image_transport::Publisher pub = it.advertise("camera/rgb/image_raw", 1);
+  cv::Mat image =
+      cv::imread(
+          "/home/adarshjs/ros_software_ws/src/package_identification_using_turtlebot/data/pack4.png");
+  cv::waitKey(3);
+  sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8",
+                                                 image).toImageMsg();
+  ros::Rate loop_rate(5);
   QReader reader;
   PathPlanner planner( { { -2.0, -3.0, 0.0, 1.0 }, { -1.0, -2.0, 0.0, 1.0 } });
   std::vector<std::string> packID;
-  packID = planner.callVision(reader, packID);
+  ros::Time start_time = ros::Time::now();
+  ros::Duration timeout(15.0);
+  while (ros::Time::now() - start_time < timeout) {
+    pub.publish(msg);
+    packID = planner.callVision(reader, packID);
+    if (packID.at(0).substr(0, 4) == "pack")
+      break;
+    loop_rate.sleep();
+  }
+
   ASSERT_STREQ("pack#4", (packID.at(0)).c_str());
 }
