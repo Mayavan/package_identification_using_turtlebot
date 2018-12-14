@@ -3,5 +3,6 @@
         test-name="QbotTest" 
         pkg="package_identification_using_turtlebot" 
         type="QbotTest" 
+        time-limit="180.0"
     />
 </launch>

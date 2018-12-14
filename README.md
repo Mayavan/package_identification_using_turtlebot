@@ -6,12 +6,11 @@
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-
 ## Overview
 
 Robots have been used to improve efficiency in a various tasks in warehouses such as package handling, identification and organization. This project aims to simulate the use of Turtlebot in identifying packages with QR codes, in a warehouse setting. 
 
-The simulation is implemented in Gazebo. ROS packages such as gmapping, and teleop_twist_keyboard are used for mapping the environment in the simulation, while move_base is used for navigation. 
+The simulation is implemented in Gazebo. ROS packages such as gmapping, and teleop_twist_keyboard are used for mapping the environment in the simulation, while move_base is used for navigation.
 
 ## SIP
 
@@ -55,5 +54,5 @@ roslaunch package_identification_using_turtlebot demo.launch
 
 ## Authors
 
-* Adarsh Jagan Sathyamoorthy Major: Robotics, E-Mail:
+* Adarsh Jagan Sathyamoorthy Major: Robotics, E-Mail: asathyam@umd.edu
 * RajendraMayavan Rajendran Sathyam Major: Robotics, E-Mail: mayavan@umd.edu
