@@ -14,6 +14,8 @@
 #include <vector>
 #include <iostream>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include "package_identification_using_turtlebot/QReader.hpp"
+
 
 class PathPlanner {
  private:
@@ -23,14 +25,16 @@ class PathPlanner {
   move_base_msgs::MoveBaseGoal goal;
   std::vector<std::vector<double>> goalPoints;
   int counter;
-  bool reachedGoal;
-  void publishInitPose(double x, double y, double w);
+  std::vector<double> publishInitPose(double x, double y, double w);
 
  public:
-  PathPlanner();
+  PathPlanner(std::vector<std::vector<double>>);
   ~PathPlanner();
+  ros::Publisher returnPublisher();
+  std::vector<double> callPublisher(double, double, double);
+  std::vector<std::string> callVision(QReader&, std::vector<std::string>);
   std::vector<std::string> sendGoals();
-  void findPackage();
+  int findPackage(std::vector<std::string>);
 };
 
 

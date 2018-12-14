@@ -47,8 +47,12 @@ int main(int argc, char **argv) {
   ros::init(argc, argv, "QBot");
   ros::NodeHandle node;
   // Initialization
-  PathPlanner planner;
-  planner.findPackage();
+  std::vector<std::vector<double>> points = { { 2.4, 0.30, 0.1, 0.9 }, { 2.5,
+      1.808, 0.0, 1.0 }, { 2.4, 3.175, 0.0, 1.0 }, { 2.4, 4.36, 0.0, 1.0 }, {
+      0.0, 0.0, 0.0, 1.0 } };
+  PathPlanner planner(points);
+  std::vector<std::string> packID = planner.sendGoals();
+  int k = planner.findPackage(packID);
 //  QReader reader;
 //  ros::spin();
   return 0;
