@@ -26,19 +26,18 @@ catkin_package()
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 include_directories( ${OpenCV_INCLUDE_DIRS} )
+include_directories(vendor/googletest)
 
 add_executable(search src/main.cpp src/QReader.cpp src/PathPlanner.cpp)
-#add_executable(sendGoals src/sendGoals.cpp)
-
 target_include_directories(search PRIVATE ${PYTHON_INCLUDE_DIRS})
-
 target_link_libraries(search ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
 
-#target_link_libraries(sendGoals ${catkin_LIBRARIES})
 
 ## Build tests
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
+  find_package(gtest)
+  find_package(gmock)
 
   add_rostest_gtest(
   QbotTest
@@ -46,10 +45,15 @@ if(CATKIN_ENABLE_TESTING)
   test/main.cpp
   test/QReaderTest.cpp
   test/PathPlannerTest.cpp
+  src/PathPlanner.cpp
+  src/QReader.cpp
   )
-
-  target_include_directories(QbotTest PRIVATE ${PYTHON_INCLUDE_DIRS})
-
+ 
   target_link_libraries(QbotTest ${catkin_LIBRARIES} ${OpenCV_LIBS} ${PYTHON_LIBRARIES})
   
+  add_dependencies(
+  search
+  QbotTest
+  ${catkin_EXPORTED_TARGETS}
+  )
 endif()
