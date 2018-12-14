@@ -38,7 +38,6 @@
  *
  */
 
-#include "package_identification_using_turtlebot/QReader.hpp"
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 #include <cmath>
 
@@ -47,15 +46,15 @@ QReader::QReader() : it(nh) {
   std::vector<uint8_t> bytes(str.begin(), str.end());
   ROS_INFO("Inside QReader Constructor");
   imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb, this);
-  cv::namedWindow("Image Window");
-  cv::namedWindow("Output Window");
-  cv::namedWindow("Resized Window");
+//  cv::namedWindow("Image Window");
+//  cv::namedWindow("Output Window");
+//  cv::namedWindow("Resized Window");
 }
 
 QReader::~QReader() {
-  cv::destroyWindow("Image Window");
-  cv::destroyWindow("Output Window");
-  cv::destroyWindow("Resized Window");
+//  cv::destroyWindow("Image Window");
+//  cv::destroyWindow("Output Window");
+//  cv::destroyWindow("Resized Window");
 }
 
 std::vector<uint8_t> QReader::returnBytes() {
@@ -74,8 +73,8 @@ void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
   img = cvPtr->image;
   img = processFrame();
 
-  cv::imshow("Image Window", img);
-  cv::waitKey(3);
+//  cv::imshow("Image Window", img);
+//  cv::waitKey(3);
 
   // Decode the QR code in the image
   bytes = decodeQR();
@@ -162,8 +161,8 @@ std::vector<uint8_t> QReader::decodeQR() {
   // Convert image to black and white
   cv::cvtColor(img, img, CV_BGR2HSV);
   inRange(img, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), img);
-  cv::imshow("Image Window", img);
-  cv::waitKey(3);
+//  cv::imshow("Image Window", img);
+//  cv::waitKey(3);
   ROS_INFO_STREAM("Checking QR code existence");
   bool found = checkQCodeExists(img);
   std::vector<uint8_t> bytes;
@@ -581,12 +580,12 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
   warpPerspective(img, output, transform, cv::Size(dimensionQR, dimensionQR));
   cv::adaptiveThreshold(output, output, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
                         CV_THRESH_BINARY, 51, 0);
-  cv::imshow("Output Window", output);
-  cv::waitKey(3);
+//  cv::imshow("Output Window", output);
+//  cv::waitKey(3);
 
   cv::resize(output, output, cv::Size(dimension, dimension), CV_INTER_LANCZOS4);
-  cv::imshow("Resized Window", output);
-  cv::waitKey(3);
+//  cv::imshow("Resized Window", output);
+//  cv::waitKey(3);
 
   return output;
 }

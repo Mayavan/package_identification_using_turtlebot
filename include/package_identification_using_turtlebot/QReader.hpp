@@ -37,6 +37,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
+#ifndef PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_
+#define PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_
+
 #include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
 #include <math.h>
@@ -237,3 +240,5 @@ class QReader {
    */
   uint8_t getNumberValue(std::vector<bool>::iterator&, unsigned int);
 };
+
+#endif /* PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_ */
