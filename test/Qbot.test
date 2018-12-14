@@ -1,4 +1,9 @@
 <launch>
+	<node pkg="rosbag" 
+	      type="play" 
+	      name="player" 
+	      output="screen" 
+	      args="--clock $(find package_identification_using_turtlebot)/test/image_topic.bag"/>
     <test 
         test-name="QbotTest" 
         pkg="package_identification_using_turtlebot" 
