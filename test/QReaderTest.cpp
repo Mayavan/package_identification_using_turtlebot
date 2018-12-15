@@ -136,7 +136,7 @@ TEST(decodeQR, mask3) {
  *
  * @return     none
  */
-TEST(decodeQR, mask3) {
+TEST(decodeQR, unknownImage) {
   std::string str;
   std::string fileLocation =
       ros::package::getPath("package_identification_using_turtlebot") +
