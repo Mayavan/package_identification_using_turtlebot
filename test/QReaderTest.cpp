@@ -38,6 +38,7 @@
  */
 
 #include <gtest/gtest.h>
+#include <ros/package.h>
 #include <ros/ros.h>
 #include <vector>
 #include "package_identification_using_turtlebot/QReader.hpp"
@@ -50,7 +51,15 @@
  *
  * @return     none
  */
-TEST(decodeQR, decodedValue) {
-  // TODO(mayavan): Test condition to be implemented
-  EXPECT_EQ(1, 1);
+TEST(decodeQR, unsupportedEncoding) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/numeric_encoding.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("unknown", str.c_str());
 }

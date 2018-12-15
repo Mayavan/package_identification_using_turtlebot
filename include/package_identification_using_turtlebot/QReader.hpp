@@ -53,8 +53,8 @@
 #include <vector>
 
 /**
- * @brief Class QReader has methods to get the image and decode the QR code in the
- * image to extract data of package ID.
+ * @brief Class QReader has methods to get the image and decode the QR code in
+ * the image to extract data of package ID.
  */
 class QReader {
  public:
@@ -94,10 +94,25 @@ class QReader {
    */
   image_transport::Subscriber imgSub;
 
+  /**
+   * @brief Function to get the extracted data array.
+   *
+   * @param none
+   *
+   * @return array of bytes of data stored in the QR code
+   */
   std::vector<uint8_t> returnBytes();
 
- private:
+  /**
+   * @brief Sets the value for the private value img
+   *
+   * @param cv::Mat to set as value of img.
+   *
+   * @return none
+   */
+  void setImage(cv::Mat image);
 
+ private:
   /**
    * @brief The decoded bytes from the Qr code
    */
@@ -251,4 +266,4 @@ class QReader {
   uint8_t getNumberValue(std::vector<bool>::iterator&, unsigned int);
 };
 
-#endif /* PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_ */
+#endif  // INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_

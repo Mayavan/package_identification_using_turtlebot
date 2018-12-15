@@ -108,6 +108,7 @@ TEST(findPackageTest, testPlanner2) {
 TEST(callVisionTest, testPlanner3) {
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
+  // Advertise a known image on camera/rgb/image_raw topic
   image_transport::Publisher pub = it.advertise("camera/rgb/image_raw", 1);
   std::string fileLocation =
       ros::package::getPath("package_identification_using_turtlebot") +
@@ -122,6 +123,7 @@ TEST(callVisionTest, testPlanner3) {
   std::vector<std::string> packID;
   ros::Time start_time = ros::Time::now();
   ros::Duration timeout(15.0);
+  // If the test is not completed within timeout the test fails
   while (ros::Time::now() - start_time < timeout) {
     pub.publish(msg);
     packID = planner.callVision(reader, packID);
@@ -141,6 +143,7 @@ TEST(callVisionTest, testPlanner3) {
 TEST(callVisionTest2, testPlanner4) {
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
+  // Advertise a known image on camera/rgb/image_raw topic
   image_transport::Publisher pub = it.advertise("camera/rgb/image_raw", 1);
   std::string fileLocation =
       ros::package::getPath("package_identification_using_turtlebot") +
@@ -155,6 +158,7 @@ TEST(callVisionTest2, testPlanner4) {
   std::vector<std::string> packID;
   ros::Time start_time = ros::Time::now();
   ros::Duration timeout(15.0);
+  // If the test is not completed within timeout the test fails
   while (ros::Time::now() - start_time < timeout) {
     pub.publish(msg);
     packID = planner.callVision(reader, packID);

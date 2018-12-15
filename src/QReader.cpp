@@ -76,8 +76,6 @@ void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
 
   // Decode the QR code in the image
   bytes = decodeQR();
-  for (auto i : bytes) std::cout << i;
-  std::cout << std::endl;
 }
 
 cv::Mat QReader::processFrame() {
@@ -731,3 +729,5 @@ uint8_t QReader::getNumberValue(std::vector<bool>::iterator& currentBit,
   }
   return value;
 }
+
+void QReader::setImage(cv::Mat image) { img = image; }
