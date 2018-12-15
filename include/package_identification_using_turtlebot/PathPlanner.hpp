@@ -38,16 +38,16 @@
  *
  */
 
-
 #ifndef PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_
 #define PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_
 
-#include <ros/ros.h>
-#include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
-#include <vector>
-#include <iostream>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <ros/ros.h>
+#include <iostream>
+#include <string>
+#include <vector>
 #include "package_identification_using_turtlebot/QReader.hpp"
 
 /**
@@ -138,6 +138,14 @@ class PathPlanner {
    * @return exit status of type int
    */
   int findPackage(std::vector<std::string>);
+  /**
+   * @brief  Method to try again if the package detection is faulty
+   * @param QReader object of QReader class
+   * @param  str of type string
+   * @return none
+   */
+  std::string waitPackageDetection(QReader&, std::string);
 };
 
-#endif /* PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_ */
+#endif /* PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_ \
+        */

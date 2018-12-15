@@ -47,6 +47,6 @@
     <remap from="scan" to="/scan"/>
   </node>
 
-  <node pkg="package_identification_using_turtlebot" type="search" name="search" output = "screen" launch-prefix = "gnome-terminal -e"/>
-
+ <!-- <node pkg="package_identification_using_turtlebot" type="search" name="search" output = "screen" launch-prefix = "gnome-terminal -e"/>
+-->
 </launch>

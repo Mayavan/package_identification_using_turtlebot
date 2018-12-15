@@ -38,28 +38,26 @@
  *
  */
 
-#include "package_identification_using_turtlebot/PathPlanner.hpp"
 #include <cmath>
+#include "package_identification_using_turtlebot/PathPlanner.hpp"
 
 QReader::QReader() : it(nh) {
   std::string str = "unknown";
   std::vector<uint8_t> bytes(str.begin(), str.end());
   ROS_INFO("Inside QReader Constructor");
   imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb, this);
-//  cv::namedWindow("Image Window");
-//  cv::namedWindow("Output Window");
-//  cv::namedWindow("Resized Window");
+  // cv::namedWindow("Image Window");
+  //  cv::namedWindow("Output Window");
+  //  cv::namedWindow("Resized Window");
 }
 
 QReader::~QReader() {
-//  cv::destroyWindow("Image Window");
-//  cv::destroyWindow("Output Window");
-//  cv::destroyWindow("Resized Window");
+  // cv::destroyWindow("Image Window");
+  //  cv::destroyWindow("Output Window");
+  //  cv::destroyWindow("Resized Window");
 }
 
-std::vector<uint8_t> QReader::returnBytes() {
-  return bytes;
-}
+std::vector<uint8_t> QReader::returnBytes() { return bytes; }
 
 void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
   cv_bridge::CvImagePtr cvPtr;
@@ -73,15 +71,13 @@ void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
   img = cvPtr->image;
   img = processFrame();
 
-//  cv::imshow("Image Window", img);
-//  cv::waitKey(3);
+  // cv::imshow("Image Window", img);
+  // cv::waitKey(3);
 
   // Decode the QR code in the image
   bytes = decodeQR();
-  for (auto i : bytes)
-    std::cout << i;
+  for (auto i : bytes) std::cout << i;
   std::cout << std::endl;
-
 }
 
 cv::Mat QReader::processFrame() {
@@ -112,7 +108,7 @@ cv::Mat QReader::processFrame() {
       convertScaleAbs(dst_norm, dst_norm_scaled);
       for (int x = 0; x < dst_norm.rows; x++) {
         for (int y = 0; y < dst_norm.cols; y++) {
-          if ((int) dst_norm.at<float>(x, y) > 200) {
+          if ((int)dst_norm.at<float>(x, y) > 200) {
             src.push_back(cv::Point2f(y, x));
           }
         }
@@ -127,7 +123,7 @@ cv::Mat QReader::processFrame() {
   if (src.size() == 4) {
     std::sort(
         src.begin(), src.end(),
-        [](const cv::Point2f& a, const cv::Point2f& b) {return a.x < b.x;});
+        [](const cv::Point2f& a, const cv::Point2f& b) { return a.x < b.x; });
 
     if (src.at(0).x + src.at(0).y < src.at(1).x + src.at(1).y) {
       topLeft = src.at(0);
@@ -143,10 +139,11 @@ cv::Mat QReader::processFrame() {
       topRight = src.at(3);
       bottomRight = src.at(2);
     }
-    srcPoints = {topLeft, topRight, bottomLeft,bottomRight};
+    srcPoints = {topLeft, topRight, bottomLeft, bottomRight};
 
-    std::vector<cv::Point2f> dstPoints = { cv::Point2f(0.0, 0.0), cv::Point2f(
-        199.0, 0.0), cv::Point2f(0.0, 199.0), cv::Point2f(199.0, 199.0) };
+    std::vector<cv::Point2f> dstPoints = {
+        cv::Point2f(0.0, 0.0), cv::Point2f(199.0, 0.0), cv::Point2f(0.0, 199.0),
+        cv::Point2f(199.0, 199.0)};
     cv::Mat transform = getPerspectiveTransform(srcPoints, dstPoints);
     warpPerspective(img, img, transform, cv::Size(200, 200), CV_INTER_LINEAR);
   }
@@ -161,8 +158,8 @@ std::vector<uint8_t> QReader::decodeQR() {
   // Convert image to black and white
   cv::cvtColor(img, img, CV_BGR2HSV);
   inRange(img, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), img);
-//  cv::imshow("Image Window", img);
-//  cv::waitKey(3);
+  //  cv::imshow("Image Window", img);
+  //  cv::waitKey(3);
   ROS_INFO_STREAM("Checking QR code existence");
   bool found = checkQCodeExists(img);
   std::vector<uint8_t> bytes;
@@ -540,17 +537,17 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
   // Sort centers based on positions to find the corners
   std::sort(
       possibleCenters.begin(), possibleCenters.end(),
-      [](const cv::Point2f& a, const cv::Point2f& b) {return a.x < b.x;});
+      [](const cv::Point2f& a, const cv::Point2f& b) { return a.x < b.x; });
   cv::Point2f topRight = possibleCenters[2];
 
   std::sort(
       possibleCenters.begin(), possibleCenters.end(),
-      [](const cv::Point2f& a, const cv::Point2f& b) {return a.y < b.y;});
+      [](const cv::Point2f& a, const cv::Point2f& b) { return a.y < b.y; });
 
   cv::Point2f bottomLeft = possibleCenters[2];
-  cv::Point2f topLeft =
-      possibleCenters[0].x < possibleCenters[1].x ?
-          possibleCenters[0] : possibleCenters[1];
+  cv::Point2f topLeft = possibleCenters[0].x < possibleCenters[1].x
+                            ? possibleCenters[0]
+                            : possibleCenters[1];
 
   cv::Point2f bottomRight = topRight - topLeft + bottomLeft;
 
@@ -561,8 +558,7 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
   corners.push_back(bottomRight);
 
   int sum_of_elems = 0;
-  for (auto& n : estimatedModuleSize)
-    sum_of_elems += n;
+  for (auto& n : estimatedModuleSize) sum_of_elems += n;
 
   int moduleSize = sum_of_elems / estimatedModuleSize.size();
   float factor = 3.5f * moduleSize;
@@ -580,12 +576,12 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
   warpPerspective(img, output, transform, cv::Size(dimensionQR, dimensionQR));
   cv::adaptiveThreshold(output, output, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
                         CV_THRESH_BINARY, 51, 0);
-//  cv::imshow("Output Window", output);
-//  cv::waitKey(3);
+  //  cv::imshow("Output Window", output);
+  //  cv::waitKey(3);
 
   cv::resize(output, output, cv::Size(dimension, dimension), CV_INTER_LANCZOS4);
-//  cv::imshow("Resized Window", output);
-//  cv::waitKey(3);
+  //  cv::imshow("Resized Window", output);
+  //  cv::waitKey(3);
 
   return output;
 }

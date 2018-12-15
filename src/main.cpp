@@ -37,23 +37,24 @@
  *
  */
 
-#include "package_identification_using_turtlebot/QReader.hpp"
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
+#include "package_identification_using_turtlebot/QReader.hpp"
 
 #include <ros/ros.h>
 
 int main(int argc, char **argv) {
-
   ros::init(argc, argv, "QBot");
   ros::NodeHandle node;
   // Initialization
-  std::vector<std::vector<double>> points = { { 2.4, 0.30, 0.1, 0.9 }, { 2.5,
-      1.808, 0.0, 1.0 }, { 2.4, 3.175, 0.0, 1.0 }, { 2.4, 4.36, 0.0, 1.0 }, {
-      0.0, 0.0, 0.0, 1.0 } };
+  std::vector<std::vector<double>> points = {{2.4, 0.30, 0.1, 0.9},
+                                             {2.5, 1.808, 0.0, 1.0},
+                                             {2.4, 3.175, 0.0, 1.0},
+                                             {2.4, 4.36, 0.0, 1.0},
+                                             {0.0, 0.0, 0.0, 1.0}};
   PathPlanner planner(points);
   std::vector<std::string> packID = planner.sendGoals();
   int k = planner.findPackage(packID);
-//  QReader reader;
-//  ros::spin();
+  //  QReader reader;
+  //  ros::spin();
   return 0;
 }

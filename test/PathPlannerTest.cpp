@@ -47,19 +47,19 @@
 
 class TestPlanner {
  private:
-  int count;
-  geometry_msgs::PoseWithCovarianceStamped pose;
+  // int count;
+  // geometry_msgs::PoseWithCovarianceStamped pose;
 
  public:
-  TestPlanner() { count = 0; }
+  TestPlanner() {}
   ~TestPlanner() {}
 
   void testCb(const geometry_msgs::PoseWithCovarianceStamped msg) {
-    ++count;
-    ROS_INFO("%.2f %.2f %.2f", msg.pose.pose.position.x,
-             msg.pose.pose.position.y, msg.pose.pose.orientation.w);
+    // ++count;
+    // ROS_INFO("%.2f %.2f %.2f", msg.pose.pose.position.x,
+    //          msg.pose.pose.position.y, msg.pose.pose.orientation.w);
   }
-  int returnCount() { return count; }
+  // int returnCount() { return count; }
 };
 
 /**
@@ -130,4 +130,37 @@ TEST(callVisionTest, testPlanner3) {
   }
 
   ASSERT_STREQ("pack#4", (packID.at(0)).c_str());
+}
+
+/**
+ * @brief      Test to check if a slanted QR code is properly detected
+ * @param[in]  TESTSuite
+ * @param[in]  test
+ * @return     none
+ */
+TEST(callVisionTest2, testPlanner4) {
+  ros::NodeHandle nh;
+  image_transport::ImageTransport it(nh);
+  image_transport::Publisher pub = it.advertise("camera/rgb/image_raw", 1);
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/pack3_slant.png";
+  cv::Mat image = cv::imread(fileLocation);
+  cv::waitKey(3);
+  sensor_msgs::ImagePtr msg =
+      cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+  ros::Rate loop_rate(5);
+  QReader reader;
+  PathPlanner planner({{-2.0, -3.0, 0.0, 1.0}, {-1.0, -2.0, 0.0, 1.0}});
+  std::vector<std::string> packID;
+  ros::Time start_time = ros::Time::now();
+  ros::Duration timeout(15.0);
+  while (ros::Time::now() - start_time < timeout) {
+    pub.publish(msg);
+    packID = planner.callVision(reader, packID);
+    if (packID.at(0).substr(0, 4) == "pack") break;
+    loop_rate.sleep();
+  }
+
+  ASSERT_STREQ("pack#3", (packID.at(0)).c_str());
 }

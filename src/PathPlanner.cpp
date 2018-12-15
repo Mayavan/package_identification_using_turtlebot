@@ -53,9 +53,7 @@ PathPlanner::PathPlanner(std::vector<std::vector<double>> points) {
 
 PathPlanner::~PathPlanner() {}
 
-ros::Publisher PathPlanner::returnPublisher() {
-  return initPosePub;
-}
+ros::Publisher PathPlanner::returnPublisher() { return initPosePub; }
 
 std::vector<double> PathPlanner::publishInitPose(double x, double y, double w) {
   std::cout << "Inside init pose publisher" << std::endl;
@@ -75,6 +73,23 @@ std::vector<double> PathPlanner::callPublisher(double x, double y, double w) {
   return publishInitPose(x, y, w);
 }
 
+std::string PathPlanner::waitPackageDetection(QReader& reader,
+                                              std::string str) {
+  // wait until package is detected
+  while (str.substr(0, 4) != "pack") {
+    ros::spinOnce();
+    std::vector<uint8_t> result = reader.returnBytes();
+    str.assign(result.begin(), result.end());
+    if (str.substr(0, 4) == "pack") {
+      ROS_INFO("QR code detected! \n");
+      ROS_INFO("Package ID is: %s \n", str.c_str());
+      break;
+    }
+    ROS_INFO("Waiting for QR code to be detected \n");
+  }
+  return str;
+}
+
 std::vector<std::string> PathPlanner::callVision(
     QReader& reader, std::vector<std::string> packID) {
   // Call image callback
@@ -83,22 +98,9 @@ std::vector<std::string> PathPlanner::callVision(
   std::string str;
   str.assign(result.begin(), result.end());
   ROS_INFO("Package ID is: %s \n", str.c_str());
-  if (str.substr(0, 4) == "pack") {
-    packID.push_back(str);
-  }
-  // wait until package is detected
-  while (str.substr(0, 4) != "pack") {
-    ros::spinOnce();
-    result = reader.returnBytes();
-    str.assign(result.begin(), result.end());
-    if (str.substr(0, 4) == "pack") {
-      ROS_INFO("QR code detected! \n");
-      ROS_INFO("Package ID is: %s \n", str.c_str());
-      packID.push_back(str);
-      break;
-    }
-    ROS_INFO("Waiting for QR code to be detected \n");
-  }
+
+  packID.push_back(waitPackageDetection(reader, str));
+
   return packID;
 }
 
@@ -117,7 +119,7 @@ std::vector<std::string> PathPlanner::sendGoals() {
   publishInitPose(-3.0, -3.0, 1.0);
   goal.target_pose.header.stamp = ros::Time::now();
   for (auto i = goalPoints.begin();
-      i != goalPoints.end() && counter < goalPoints.size(); i++) {
+       i != goalPoints.end() && counter < goalPoints.size(); i++) {
     ROS_INFO("Moving to goal %d \n", counter + 1);
     goal.target_pose.pose.position.x = (*i).at(0);
     goal.target_pose.pose.position.y = (*i).at(1);
@@ -134,22 +136,23 @@ std::vector<std::string> PathPlanner::sendGoals() {
       } else {
         packID = callVision(reader, packID);
       }
-    } else
+    } else {
       ROS_INFO("Failed to reach goal");
+    }
   }
   return packID;
 }
 
 int PathPlanner::findPackage(std::vector<std::string> packID) {
-  // TODO: May need try and catch?
+  // TODO(Adarsh): May need try and catch?
   auto j = goalPoints.begin();
   std::cout << "*****************************" << std::endl;
   std::cout << "******Package Locations******" << std::endl;
   std::cout << "*****************************" << std::endl;
   for (auto i = packID.begin(); i != packID.end() && j != goalPoints.end();
-      i++, j++) {
-    std::cout << (*i) << " is in position x=" << (*j).at(0) << " y = "
-              << (*j).at(1) << std::endl;
+       i++, j++) {
+    std::cout << (*i) << " is in position x=" << (*j).at(0)
+              << " y = " << (*j).at(1) << std::endl;
   }
   ros::Duration(10).sleep();
   return 0;
