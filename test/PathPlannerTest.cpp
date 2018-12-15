@@ -39,8 +39,9 @@
  */
 
 #include <gtest/gtest.h>
-#include <ros/ros.h>
 #include <ros/connection_manager.h>
+#include <ros/package.h>
+#include <ros/ros.h>
 #include <vector>
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 
@@ -50,20 +51,15 @@ class TestPlanner {
   geometry_msgs::PoseWithCovarianceStamped pose;
 
  public:
-  TestPlanner() {
-    count = 0;
-  }
-  ~TestPlanner() {
-  }
+  TestPlanner() { count = 0; }
+  ~TestPlanner() {}
 
   void testCb(const geometry_msgs::PoseWithCovarianceStamped msg) {
     ++count;
     ROS_INFO("%.2f %.2f %.2f", msg.pose.pose.position.x,
              msg.pose.pose.position.y, msg.pose.pose.orientation.w);
   }
-  int returnCount() {
-    return count;
-  }
+  int returnCount() { return count; }
 };
 
 /**
@@ -74,19 +70,19 @@ class TestPlanner {
  */
 TEST(publishInitPoseTest, testPlanner1) {
   ros::NodeHandle nh;
-  PathPlanner planner( { { 0.0, 0.0, 0.0, 1.0 } });
+  PathPlanner planner({{0.0, 0.0, 0.0, 1.0}});
   ros::Publisher pub = planner.returnPublisher();
   TestPlanner test;
-  ros::Subscriber sub = nh.subscribe("/initialpose", 1, &TestPlanner::testCb,
-                                     &test);
+  ros::Subscriber sub =
+      nh.subscribe("/initialpose", 1, &TestPlanner::testCb, &test);
   EXPECT_EQ(pub.getNumSubscribers(), 1U);
   EXPECT_EQ(sub.getNumPublishers(), 1U);
   std::vector<double> res = planner.callPublisher(2.0, 1.0, 1.0);
   ASSERT_EQ(res.at(0), 2.0);
   ASSERT_EQ(res.at(1), 1.0);
   ASSERT_EQ(res.at(2), 1.0);
-//  ros::spinOnce();
-//  EXPECT_EQ(test.returnCount(), 1U);
+  //  ros::spinOnce();
+  //  EXPECT_EQ(test.returnCount(), 1U);
 }
 
 /**
@@ -96,7 +92,7 @@ TEST(publishInitPoseTest, testPlanner1) {
  * @return     none
  */
 TEST(findPackageTest, testPlanner2) {
-  PathPlanner planner( { { -2.0, -3.0, 0.0, 1.0 }, { -1.0, -2.0, 0.0, 1.0 } });
+  PathPlanner planner({{-2.0, -3.0, 0.0, 1.0}, {-1.0, -2.0, 0.0, 1.0}});
   std::vector<std::string> packID;
   packID.push_back("pack#1");
   packID.push_back("pack#2");
@@ -113,21 +109,23 @@ TEST(callVisionTest, testPlanner3) {
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
   image_transport::Publisher pub = it.advertise("camera/rgb/image_raw", 1);
-  cv::Mat image = cv::imread("../data/pack4.png");
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/pack4.png";
+  cv::Mat image = cv::imread(fileLocation);
   cv::waitKey(3);
-  sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8",
-                                                 image).toImageMsg();
+  sensor_msgs::ImagePtr msg =
+      cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
   ros::Rate loop_rate(5);
   QReader reader;
-  PathPlanner planner( { { -2.0, -3.0, 0.0, 1.0 }, { -1.0, -2.0, 0.0, 1.0 } });
+  PathPlanner planner({{-2.0, -3.0, 0.0, 1.0}, {-1.0, -2.0, 0.0, 1.0}});
   std::vector<std::string> packID;
   ros::Time start_time = ros::Time::now();
   ros::Duration timeout(15.0);
   while (ros::Time::now() - start_time < timeout) {
     pub.publish(msg);
     packID = planner.callVision(reader, packID);
-    if (packID.at(0).substr(0, 4) == "pack")
-      break;
+    if (packID.at(0).substr(0, 4) == "pack") break;
     loop_rate.sleep();
   }
 
