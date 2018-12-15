@@ -140,7 +140,7 @@ TEST(callVisionTest, testPlanner3) {
  * @param[in]  test
  * @return     none
  */
-TEST(callVisionTest2, testPlanner4) {
+TEST(waitPackageDetection, detectionCorrection) {
   ros::NodeHandle nh;
   image_transport::ImageTransport it(nh);
   // Advertise a known image on camera/rgb/image_raw topic
@@ -155,15 +155,42 @@ TEST(callVisionTest2, testPlanner4) {
   ros::Rate loop_rate(5);
   QReader reader;
   PathPlanner planner({{-2.0, -3.0, 0.0, 1.0}, {-1.0, -2.0, 0.0, 1.0}});
-  std::vector<std::string> packID;
   ros::Time start_time = ros::Time::now();
   ros::Duration timeout(15.0);
+  std::string result;
   // If the test is not completed within timeout the test fails
   while (ros::Time::now() - start_time < timeout) {
     pub.publish(msg);
-    packID = planner.callVision(reader, packID);
-    if (packID.at(0).substr(0, 4) == "pack") break;
+    std::string incorrectDetection = "hello";
+    result = planner.waitPackageDetection(reader, incorrectDetection);
+    if (result.substr(0, 4) == "pack") break;
     loop_rate.sleep();
   }
-  ASSERT_STREQ("pack#3", (packID.at(0)).c_str());
+  ASSERT_STREQ("pack#3", result.c_str());
+}
+
+/**
+ * @brief      Test to check the entire navigation
+ * @param[in]  TESTSuite
+ * @param[in]  test
+ * @return     none
+ */
+TEST(sendGoals, navigation) {
+  // Initialization
+  std::vector<std::vector<double> > points = {{2.4, 0.30, 0.1, 0.9},
+                                              {2.5, 1.808, 0.0, 1.0},
+                                              {2.4, 3.175, 0.0, 1.0},
+                                              {2.4, 4.36, 0.0, 1.0},
+                                              {0.0, 0.0, 0.0, 1.0}};
+  PathPlanner planner(points);
+  std::vector<std::string> packID = planner.sendGoals();
+  std::vector<std::string> expectedPackID;
+  expectedPackID.push_back("pack#4");
+  expectedPackID.push_back("pack#3");
+  expectedPackID.push_back("pack#2");
+  expectedPackID.push_back("pack#1");
+  auto j = expectedPackID.begin();
+  for (auto i = packID.begin(); i != packID.end(); i++, j++) {
+    ASSERT_STREQ((*j).c_str(), (*i).c_str());
+  }
 }

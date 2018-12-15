@@ -160,7 +160,8 @@ std::vector<uint8_t> QReader::decodeQR() {
   //  cv::waitKey(3);
   ROS_INFO_STREAM("Checking QR code existence");
   bool found = checkQCodeExists(img);
-  std::vector<uint8_t> bytes = {0x75, 0x6E, 0x6B, 0x6E, 0x6F, 0x77, 0x6E};
+  std::vector<uint8_t> bytes;
+  // Check if QR code was found
   if (found) {
     ROS_INFO_STREAM("QR Code exists");
     cv::Mat QR = warpToCode(img);
@@ -169,6 +170,8 @@ std::vector<uint8_t> QReader::decodeQR() {
     unmask(bitMatrix);
 
     bytes = decodeArray(bitMatrix);
+  } else {
+    bytes = {0x75, 0x6E, 0x6B, 0x6E, 0x6F, 0x77, 0x6E};  // unknown
   }
   return bytes;
 }

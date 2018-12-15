@@ -39,7 +39,7 @@
  */
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 
-PathPlanner::PathPlanner(std::vector<std::vector<double>> points) {
+PathPlanner::PathPlanner(std::vector<std::vector<double> > points) {
   initPosePub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
       "/initialpose", 1000);
   initialPose.header.frame_id = "map";
