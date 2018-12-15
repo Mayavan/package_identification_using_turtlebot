@@ -168,29 +168,3 @@ TEST(waitPackageDetection, detectionCorrection) {
   }
   ASSERT_STREQ("pack#3", result.c_str());
 }
-
-/**
- * @brief      Test to check the entire navigation
- * @param[in]  TESTSuite
- * @param[in]  test
- * @return     none
- */
-TEST(sendGoals, navigation) {
-  // Initialization
-  std::vector<std::vector<double> > points = {{2.4, 0.30, 0.1, 0.9},
-                                              {2.5, 1.808, 0.0, 1.0},
-                                              {2.4, 3.175, 0.0, 1.0},
-                                              {2.4, 4.36, 0.0, 1.0},
-                                              {0.0, 0.0, 0.0, 1.0}};
-  PathPlanner planner(points);
-  std::vector<std::string> packID = planner.sendGoals();
-  std::vector<std::string> expectedPackID;
-  expectedPackID.push_back("pack#4");
-  expectedPackID.push_back("pack#3");
-  expectedPackID.push_back("pack#2");
-  expectedPackID.push_back("pack#1");
-  auto j = expectedPackID.begin();
-  for (auto i = packID.begin(); i != packID.end(); i++, j++) {
-    ASSERT_STREQ((*j).c_str(), (*i).c_str());
-  }
-}
