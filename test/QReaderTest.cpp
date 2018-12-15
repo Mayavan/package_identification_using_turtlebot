@@ -44,7 +44,7 @@
 #include "package_identification_using_turtlebot/QReader.hpp"
 
 /**
- * @brief      Testing if the decoder function works properly
+ * @brief      Testing if the decoder function handles unknown encoding properly
  *
  * @param[in]     TESTSuite
  * @param[in]     testService
@@ -56,6 +56,91 @@ TEST(decodeQR, unsupportedEncoding) {
   std::string fileLocation =
       ros::package::getPath("package_identification_using_turtlebot") +
       "/data/numeric_encoding.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("unknown", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 1
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask1) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/pack2.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("pack#2", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 2
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask2) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/pack1.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("pack#1", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 3
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask3) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/pack5.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("pack#5", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function to check handling of unknown
+ * images
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask3) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/unknown.png";
   cv::Mat image = cv::imread(fileLocation);
   QReader reader;
   reader.setImage(image);
