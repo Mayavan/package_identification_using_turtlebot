@@ -161,6 +161,5 @@ TEST(callVisionTest2, testPlanner4) {
     if (packID.at(0).substr(0, 4) == "pack") break;
     loop_rate.sleep();
   }
-
   ASSERT_STREQ("pack#3", (packID.at(0)).c_str());
 }

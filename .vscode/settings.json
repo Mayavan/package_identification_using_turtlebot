@@ -47,5 +47,9 @@
         "typeindex": "cpp",
         "typeinfo": "cpp",
         "utility": "cpp"
-    }
+    },
+    "python.autoComplete.extraPaths": [
+        "/home/mayavan/catkin_ws/devel/lib/python2.7/dist-packages",
+        "/opt/ros/kinetic/lib/python2.7/dist-packages"
+    ]
 }

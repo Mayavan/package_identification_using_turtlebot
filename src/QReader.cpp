@@ -108,7 +108,7 @@ cv::Mat QReader::processFrame() {
       convertScaleAbs(dst_norm, dst_norm_scaled);
       for (int x = 0; x < dst_norm.rows; x++) {
         for (int y = 0; y < dst_norm.cols; y++) {
-          if ((int)dst_norm.at<float>(x, y) > 200) {
+          if (static_cast<int>(dst_norm.at<float>(x, y)) > 200) {
             src.push_back(cv::Point2f(y, x));
           }
         }
