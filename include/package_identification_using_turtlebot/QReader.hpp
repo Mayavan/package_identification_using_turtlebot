@@ -36,21 +36,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-#ifndef PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_
-#define PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_
+#ifndef INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_
+#define INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_QREADER_HPP_
 
-#include <cv_bridge/cv_bridge.h>
 #include <image_transport/image_transport.h>
-#include <math.h>
-#include <ros/console.h>
-#include <sensor_msgs/image_encodings.h>
-#include <iostream>
-#include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgcodecs/imgcodecs.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/opencv.hpp>
 #include <vector>
+#include <opencv2/opencv.hpp>
 
 /**
  * @brief Class QReader has methods to get the image and decode the QR code in

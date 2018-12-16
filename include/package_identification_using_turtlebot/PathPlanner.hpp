@@ -38,14 +38,12 @@
  *
  */
 
-#ifndef PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_
-#define PACKAGE_IDENTIFICATION_USING_TURTLEBOT_INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_
+#ifndef INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_
+#define INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_
 
-#include <actionlib/client/simple_action_client.h>
 #include <geometry_msgs/PoseWithCovarianceStamped.h>
 #include <move_base_msgs/MoveBaseAction.h>
 #include <ros/ros.h>
-#include <iostream>
 #include <string>
 #include <vector>
 #include "package_identification_using_turtlebot/QReader.hpp"
@@ -98,7 +96,7 @@ class PathPlanner {
    * @param points of type std::vector<std::vector<double>>
    * @return none
    */
-  PathPlanner(std::vector<std::vector<double>>);
+  explicit PathPlanner(std::vector<std::vector<double>>);
   /**
    * @brief Destructor of the PathPlanner class
    * @param none

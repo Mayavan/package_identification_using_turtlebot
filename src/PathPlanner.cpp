@@ -38,19 +38,28 @@
  *
  */
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
+#include <actionlib/client/simple_action_client.h>
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#include <move_base_msgs/MoveBaseAction.h>
+#include <ros/ros.h>
+#include <string>
+#include <vector>
+#include "package_identification_using_turtlebot/QReader.hpp"
 
 PathPlanner::PathPlanner(std::vector<std::vector<double> > points) {
   initPosePub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
       "/initialpose", 1000);
   move_base_msgs::MoveBaseGoal targetPose;
+  // Initialize the intial pose
   initialPose.header.frame_id = "map";
-  targetPose.target_pose.header.frame_id = "map";
-  targetPose.target_pose.header.stamp = ros::Time::now();
   initialPose.pose.pose.position.x = 0.0;
   initialPose.pose.pose.position.y = 0.0;
   initialPose.pose.pose.orientation.w = 1.0;
   counter = 0;
 
+  // Add the points to the goal vector
+  targetPose.target_pose.header.frame_id = "map";
+  targetPose.target_pose.header.stamp = ros::Time::now();
   for (auto i = points.begin(); i != points.end() && counter < points.size();
        i++) {
     targetPose.target_pose.pose.position.x = (*i).at(0);
@@ -66,11 +75,14 @@ PathPlanner::~PathPlanner() {}
 ros::Publisher PathPlanner::returnPublisher() { return initPosePub; }
 
 std::vector<double> PathPlanner::publishInitPose(double x, double y, double w) {
-  std::cout << "Inside init pose publisher" << std::endl;
+  ROS_DEBUG_STREAM("Inside init pose publisher");
+  // Update initial pose from arguments
   initialPose.pose.pose.position.x = x;
   initialPose.pose.pose.position.y = y;
   initialPose.pose.pose.orientation.w = w;
+  // Publish the new pose
   initPosePub.publish(initialPose);
+
   std::vector<double> initPose;
   initPose.push_back(x);
   initPose.push_back(y);
@@ -79,7 +91,7 @@ std::vector<double> PathPlanner::publishInitPose(double x, double y, double w) {
 }
 
 std::vector<double> PathPlanner::callPublisher(double x, double y, double w) {
-  std::cout << "Inside call publisher function" << std::endl;
+  // Calls the private class (For rostest)
   return publishInitPose(x, y, w);
 }
 
@@ -89,12 +101,12 @@ std::string PathPlanner::waitPackageDetection(std::string str) {
     ros::spinOnce();
     std::vector<uint8_t> result = reader.returnBytes();
     str.assign(result.begin(), result.end());
+    // Check if QR code is detected properly
     if (str.substr(0, 4) == "pack") {
       ROS_INFO("QR code detected! \n");
       ROS_INFO("Package ID is: %s \n", str.c_str());
       break;
     }
-    ROS_INFO("Waiting for QR code to be detected \n");
   }
   return str;
 }
@@ -103,6 +115,7 @@ std::vector<std::string> PathPlanner::callVision(
     std::vector<std::string> packID) {
   // Call image callback
   ros::spinOnce();
+  // Get the updated result
   std::vector<uint8_t> result = reader.returnBytes();
   std::string str;
   str.assign(result.begin(), result.end());
@@ -128,18 +141,19 @@ std::vector<std::string> PathPlanner::sendGoals() {
   publishInitPose(-3.0, -3.0, 1.0);
   for (auto i = goal.begin(); i != goal.end() && counter < goal.size(); i++) {
     ROS_INFO("Moving to goal %d \n", counter + 1);
+    // Send goal to move base
     ac.sendGoal(*i);
     ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
       counter = counter + 1;
-      ROS_INFO("Reached goal %d \n", counter);
+      ROS_INFO_STREAM("Reached goal %d \n" << counter);
       if (counter == goal.size()) {
         break;
       } else {
         packID = callVision(packID);
       }
     } else {
-      ROS_INFO("Failed to reach goal");
+      ROS_WARN_STREAM("Failed to reach goal");
     }
   }
   return packID;
@@ -147,15 +161,16 @@ std::vector<std::string> PathPlanner::sendGoals() {
 
 int PathPlanner::findPackage(std::vector<std::string> packID) {
   auto j = goal.begin();
-  std::cout << "*****************************" << std::endl;
-  std::cout << "******Package Locations******" << std::endl;
-  std::cout << "*****************************" << std::endl;
+  std::string result =
+      "\n*****************************\n******Package "
+      "Locations******\n*****************************\n";
   for (auto i = packID.begin(); i != packID.end() && j != goal.end();
        i++, j++) {
-    std::cout << (*i)
-              << " is in position x=" << (*j).target_pose.pose.position.x
-              << " y = " << (*j).target_pose.pose.position.y << std::endl;
+    result += (*i) + " is in position x=" +
+              std::to_string((*j).target_pose.pose.position.x) +
+              " y = " + std::to_string((*j).target_pose.pose.position.y) + "\n";
   }
+  ROS_INFO_STREAM(result);
   ros::Duration(10).sleep();
   return 0;
 }

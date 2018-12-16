@@ -37,11 +37,9 @@
  *
  */
 
+#include <ros/ros.h>
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 #include "package_identification_using_turtlebot/QReader.hpp"
-
-#include <ros/package.h>
-#include <ros/ros.h>
 
 int main(int argc, char **argv) {
   ros::init(argc, argv, "QBot");

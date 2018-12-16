@@ -38,7 +38,19 @@
  *
  */
 
+#include <cv_bridge/cv_bridge.h>
+#include <image_transport/image_transport.h>
+#include <math.h>
+#include <ros/console.h>
+#include <sensor_msgs/image_encodings.h>
+#include <vector>
 #include <cmath>
+#include <iostream>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgcodecs/imgcodecs.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/opencv.hpp>
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 
 QReader::QReader() : it(nh) {
@@ -46,16 +58,9 @@ QReader::QReader() : it(nh) {
   std::vector<uint8_t> bytes(str.begin(), str.end());
   ROS_INFO("Inside QReader Constructor");
   imgSub = it.subscribe("/camera/rgb/image_raw", 1, &QReader::imageCb, this);
-  // cv::namedWindow("Image Window");
-  //  cv::namedWindow("Output Window");
-  //  cv::namedWindow("Resized Window");
 }
 
-QReader::~QReader() {
-  // cv::destroyWindow("Image Window");
-  //  cv::destroyWindow("Output Window");
-  //  cv::destroyWindow("Resized Window");
-}
+QReader::~QReader() {}
 
 std::vector<uint8_t> QReader::returnBytes() { return bytes; }
 
@@ -71,9 +76,6 @@ void QReader::imageCb(const sensor_msgs::ImageConstPtr& msg) {
   img = cvPtr->image;
   img = processFrame();
 
-  // cv::imshow("Image Window", img);
-  // cv::waitKey(3);
-
   // Decode the QR code in the image
   bytes = decodeQR();
 }
@@ -87,6 +89,7 @@ cv::Mat QReader::processFrame() {
   std::vector<cv::Vec4i> hierarchy;
   findContours(temp, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE,
                cv::Point(0, 0));
+  // Threshold the counters
   std::vector<std::vector<cv::Point> > contours_poly(contours.size());
   std::vector<cv::Rect> boundRect(contours.size());
   cv::Mat roi(img.rows, img.cols, CV_8UC3, cv::Scalar(0, 0, 0));
@@ -156,8 +159,6 @@ std::vector<uint8_t> QReader::decodeQR() {
   // Convert image to black and white
   cv::cvtColor(img, img, CV_BGR2HSV);
   inRange(img, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), img);
-  //  cv::imshow("Image Window", img);
-  //  cv::waitKey(3);
   ROS_INFO_STREAM("Checking QR code existence");
   bool found = checkQCodeExists(img);
   std::vector<uint8_t> bytes;
@@ -461,7 +462,7 @@ bool QReader::checkDiagonal(const cv::Mat& img, float centerRow,
   std::vector<int> stateCount(5, 0);
   int col = centerCol;
   int row = centerRow;
-  // traverse towards the top left corner
+  // Traverse towards the top left corner
   while (col >= 0 && row >= 0 && img.at<uchar>(row, col) < 128) {
     stateCount[2]++;
     row--;
@@ -492,7 +493,7 @@ bool QReader::checkDiagonal(const cv::Mat& img, float centerRow,
   int maxRows = img.rows;
   col = centerCol + 1;
   row = centerRow + 1;
-  // traverse towards the bottom right corner
+  // Traverse towards the bottom right corner
   while (row < maxRows && col < maxCols && img.at<uchar>(row, col) < 128) {
     stateCount[2]++;
     row++;
@@ -577,13 +578,7 @@ cv::Mat QReader::warpToCode(cv::Mat& img) {
   warpPerspective(img, output, transform, cv::Size(dimensionQR, dimensionQR));
   cv::adaptiveThreshold(output, output, 255, CV_ADAPTIVE_THRESH_GAUSSIAN_C,
                         CV_THRESH_BINARY, 51, 0);
-  //  cv::imshow("Output Window", output);
-  //  cv::waitKey(3);
-
   cv::resize(output, output, cv::Size(dimension, dimension), CV_INTER_LANCZOS4);
-  //  cv::imshow("Resized Window", output);
-  //  cv::waitKey(3);
-
   return output;
 }
 
