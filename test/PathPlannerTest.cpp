@@ -149,3 +149,18 @@ TEST(waitPackageDetection, detectionCorrection) {
   }
   ASSERT_STREQ("pack#3", result.c_str());
 }
+
+/**
+ * @brief      Test to check navigation of turtlebot
+ * @param[in]  TESTSuite
+ * @param[in]  test
+ * @return     none
+ */
+TEST(sendGoals, navigator) {
+  // Initialization
+  std::vector<std::vector<double> > points = {{2.4, 0.30, 0.1, 0.9},
+                                             {0.0, 0.0, 0.0, 1.0}};
+  PathPlanner planner(points);
+  std::vector<std::string> packID = planner.sendGoals();
+  ASSERT_STREQ("pack#4", (*packID.begin()).c_str());
+}
