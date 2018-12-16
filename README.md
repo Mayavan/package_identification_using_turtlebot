@@ -26,9 +26,6 @@ The scenario is that some new packages of unknown identities have arrived at the
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/moving_between_packages.gif?raw=true" alt="Moving to next package when current package is identified."/>
 </p>
 
-## Documentation
-Click [here](https://mayavan.github.io/package_identification_using_turtlebot/) to view documentation.
-
 ## SIP
 
 The product backlog, iteration log and time log sheets can be found [here.](https://docs.google.com/spreadsheets/d/1RWIvnbdE3t9a1EoGMhIvIEiinyssCJ5bO6Itf2WrIy8/edit?usp=sharing)
@@ -114,13 +111,16 @@ catkin_make run_tests
 This runs 12 test cases for various methods in the PathPlanner and QReader classes. The code for the tests can be found in the test folder.
 
 ## Doxygen Documentation
+
+Click [here](https://mayavan.github.io/package_identification_using_turtlebot/) to view documentation.
+
 To install Doxygen:
 ```
 sudo apt-get install doxygen
 ``` 
 To generate Doxygen documentation, run:
 ```
-doxygen ./Doxygen
+doxygen Doxyfile
 ```
  
 

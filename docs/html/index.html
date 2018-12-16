@@ -119,7 +119,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <h2>Test</h2>
 <p>To run the test cases, run: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;rostest package_identification_using_turtlebot Qbot.test</div></div><!-- fragment --><p>All test cases in your catkin workspace can be run while compiling by: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;catkin_make run_tests</div></div><!-- fragment --><p>This runs 12 test cases for various methods in the <a class="el" href="d9/d45/classPathPlanner.html" title="Class PathPlanner has methods send goal points and initial pose of the turtlebot to move_base package...">PathPlanner</a> and <a class="el" href="d2/db2/classQReader.html" title="Class QReader has methods to get the image and decode the QR code in the image to extract data of pac...">QReader</a> classes. The code for the tests can be found in the test folder.</p>
 <h2>Doxygen Documentation</h2>
-<p>To install Doxygen: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;sudo apt-get install doxygen</div></div><!-- fragment --><p> To generate Doxygen documentation, run: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;doxygen ./Doxygen</div></div><!-- fragment --><h2>Known Issues and Bugs</h2>
+<p>Click <a href="https://mayavan.github.io/package_identification_using_turtlebot/">here</a> to view documentation.</p>
+<p>To install Doxygen: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;sudo apt-get install doxygen</div></div><!-- fragment --><p> To generate Doxygen documentation, run: </p><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;doxygen Doxyfile</div></div><!-- fragment --><h2>Known Issues and Bugs</h2>
 <ul>
 <li>In very rare situations, the Turtlebot might get stuck for sometime in detecting QR codes if 4 corner points of the QR code are not detected. This is mainly due to the simulated errors in odometry in Gazebo which results in very slanted perspectives. Another solution is to further tune the parameters in Harris corner detection to detect more points (which is kept conservative as of now).</li>
 <li>The move_base action client in the code has not been tested due to dependency issues for the turtlebot_gazebo packages in Travis. Testing this code would increase coverage to 97-98%.</li>
@@ -133,7 +134,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sun Dec 16 2018 13:57:39 for Package-Identification-using-Turtlebot by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Sun Dec 16 2018 15:14:52 for Package-Identification-using-Turtlebot by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.11
 </small></address>
