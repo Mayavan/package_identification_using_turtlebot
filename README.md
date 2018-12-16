@@ -26,6 +26,8 @@ The scenario is that some new packages of unknown identities have arrived at the
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/moving_between_packages.gif?raw=true" alt="Moving to next package when current package is identified."/>
 </p>
 
+## Documentation
+Click [here](https://mayavan.github.io/package_identification_using_turtlebot/) to view documentation.
 
 ## SIP
 
