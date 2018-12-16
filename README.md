@@ -14,7 +14,7 @@ Robots have been used to improve efficiency in a various tasks in warehouses suc
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/navspeed.gif?raw=true" alt="Turtlebot navigating towards packages."/>
 </p>
 
- Our main focus in this project is QR-code decoding. Image stream from Turtlebot's simulated camera is subscribed and processed to obtain a clear front view of the QR code. The masking and encoding type of the QR code is detected, and it is unmasked to extract a bit stream, which is then coverted to a string. This resultant string is the package ID. Each package ID must have a valid prefix to ensure that appropriate packages have arrived at the warehouse. In our case we use "pack" as a valid prefix. 
+ Our main focus in this project is QR-code decoding. Image stream from Turtlebot's simulated camera is subscribed and processed to obtain a clear front view of the QR code. The masking and encoding type of the QR code is detected, and it is unmasked to extract a bit stream, which is then coverted to a string. This resultant string is the package ID. Each package ID must have a valid prefix to ensure that appropriate packages have arrived at the warehouse. In our case we use "pack" as a valid prefix. Since there can be errors in odometry in the Turtlebot, it may not always reliably orient itself near the packages which results in a slanted perspective.To ensure that the package identification is robust to such odometry errors, we threshold and isolate the QR code first and then detect Harris corners. These corner points are then used to warp the perspective of the QR code. Only then the decoding is applyed to the image.
 
 <p align="center">
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/transform.gif?raw=true" alt="Decoding the QR code."/>
@@ -26,6 +26,7 @@ The scenario is that some new packages of unknown identities have arrived at the
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/moving_between_packages.gif?raw=true" alt="Moving to next package when current package is identified."/>
 </p>
 
+
 ## SIP
 
 The product backlog, iteration log and time log sheets can be found [here.](https://docs.google.com/spreadsheets/d/1RWIvnbdE3t9a1EoGMhIvIEiinyssCJ5bO6Itf2WrIy8/edit?usp=sharing)
@@ -34,17 +35,17 @@ The sprint planning and review document can be viewed [here.](https://docs.googl
 
 ## Dependencies
 
-This project is run on top of Ubuntu 16.04 with ROS Kinetic and Gazebo 7.14.
+This project is run on top of Ubuntu 16.04 with ROS Kinetic and Gazebo 7.14. 
 
-This project requires the following packages to be installed, they can be installed by running:
+To install ROS Kinetic in Ubuntu 16.04, follow the steps given [here](http://wiki.ros.org/kinetic/Installation/Ubuntu). Catkin can be installed from [here](http://wiki.ros.org/catkin).
 
-Ensure that packages such as move_base, actionlib, and gazebo_ros packages are installed:
+ROS packages such as move_base, actionlib, and gazebo_ros packages should be installed as:
 
 ```
 sudo apt-get install ros-kinetic-move-base ros-kinetic-actionlib ros-kinetic-gazebo-ros
 ```
 
-Turtlebot packages required are:
+Turtlebot packages that are required can be installed as:
 
 ```
 sudo apt-get install ros-kinetic-turtlebot-gazebo ros-kinetic-turtlebot-apps ros-kinetic-turtlebot-rviz-launchers
@@ -52,15 +53,51 @@ sudo apt-get install ros-kinetic-turtlebot-gazebo ros-kinetic-turtlebot-apps ros
 
 For the vision aspects of the project, we use OpenCV 3.3.1. It can be installed from [here](https://www.learnopencv.com/install-opencv3-on-ubuntu/)
 
-## Run
+## Download
+Before building the package, ensure that your catkin workspace is set up properly. In a new terminal, type the following commands:
 
-## Test
+```
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws/
+catkin_make
+source devel/setup.bash
+```
+For more details follow the steps [here](http://wiki.ros.org/catkin/Tutorials/create_a_workspace) 
+
+Download this repository inside src directory inside your catkin workspace.
+```
+cd ~/catkin_ws/src/
+git clone https://github.com/Mayavan/Package_Identification_using_Turtlebot.git
+```
+
+## Build
+After cloning, you should see a package inside src. To build this package, when you're inside the src folder:
+```
+cd ..
+catkin_make
+source devel/setup.bash
+```
 
 ## Running Demo
+To run a fullfledged demo of the Turtlebot in the warehouse setting identifying packages, give:
 
 ```
 roslaunch package_identification_using_turtlebot demo.launch
 ```
+
+In Gazebo, the Turtlebot spawns at (-3, -3) and starts navigating towards the packages. Once a goal is reached, ROS info messages will display the state if the identification (whether package is IDed or Turtlebot is waiting for proper identification). When the four packages are detected, the Turtlebot moves to the origin. The package IDs and their locations are then printed and code exits.
+
+Additionally, the navigation, global and local costmaps can be viewed in Rviz.
+```
+roslaunch turtlebot_rviz_launchers view_navigation.launch
+```
+For additional information see [here](http://learn.turtlebot.com/2015/02/03/8/).
+<p align="center">
+  <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/rviz.png?raw=true" alt="Turtlebot Rviz."/>
+</p>
+
+## Test
+To run the test cases
 
 ## Known Issues and Bugs
 
