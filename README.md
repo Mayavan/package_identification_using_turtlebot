@@ -164,4 +164,4 @@ THE POSSIBILITY OF SUCH DAMAGE.
 ## Authors
 
 * Adarsh Jagan Sathyamoorthy Major: I am a 2nd year Robotics graduate student at UMD College Park. I have a Bachelors degree in Electronics and Communication from National Institute of Technology- Tiruchirapalli, India. My primary interests are Planning, computer vision, and robot learning.  For more about me, please see my [linkedin](https://www.linkedin.com/in/adarsh-jagan-sathyamoorthy-6b6726b3/). Email: asathyam@umd.edu
-* RajendraMayavan Rajendran Sathyam Major: Robotics, E-Mail: mayavan@umd.edu
+* RajendraMayavan Rajendran Sathyam: I am doing my second year master's in Robotics. I completed my Bachelors in Electrical and Electronics engineering in Anna University, Chennai, India. I am interested in Industrial Automation and computer vision. E-Mail: mayavan@umd.edu
