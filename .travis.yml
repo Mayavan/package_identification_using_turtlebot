@@ -75,7 +75,7 @@ before_install:
   - gem install coveralls-lcov 
   # Install Packages required for turtlebot
   - sudo apt-get install ros-kinetic-move-base ros-kinetic-actionlib ros-kinetic-gazebo-ros
-  - sudo apt-get install ros-kinetic-turtlebot-gazebo ros-kinetic-turtlebot-apps ros-kinetic-turtlebot-rviz-launchers
+  - sudo apt-get install -f ros-kinetic-turtlebot-gazebo ros-kinetic-turtlebot-apps ros-kinetic-turtlebot-rviz-launchers
 
 # Create a catkin workspace with the package under integration.
 install:
