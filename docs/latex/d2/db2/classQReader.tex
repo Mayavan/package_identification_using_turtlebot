@@ -1,0 +1,288 @@
+\hypertarget{classQReader}{}\section{Q\+Reader Class Reference}
+\label{classQReader}\index{Q\+Reader@{Q\+Reader}}
+
+
+Class \hyperlink{classQReader}{Q\+Reader} has methods to get the image and decode the QR code in the image to extract data of package ID.  
+
+
+
+
+{\ttfamily \#include $<$Q\+Reader.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classQReader_a88aa40e37ee8602e613b884eac08db36}{Q\+Reader} ()
+\begin{DoxyCompactList}\small\item\em Constructs a object. \end{DoxyCompactList}\item 
+\hyperlink{classQReader_af097eb209e44cff3f22154415fe36dc6}{$\sim$\+Q\+Reader} ()
+\begin{DoxyCompactList}\small\item\em Destroys the object. \end{DoxyCompactList}\item 
+void \hyperlink{classQReader_a9d50ba0c8a2c6cea9c2bb00462b9f69c}{image\+Cb} (const sensor\+\_\+msgs\+::\+Image\+Const\+Ptr \&msg)
+\begin{DoxyCompactList}\small\item\em A function to get the raw image, from the camera and convert it to cv\+::\+Mat format using cv bridge. \end{DoxyCompactList}\item 
+cv\+::\+Mat \hyperlink{classQReader_ac0f5e59eef0b0c3de524a5674a3b3881}{process\+Frame} ()
+\item 
+std\+::vector$<$ uint8\+\_\+t $>$ \hyperlink{classQReader_ab9ade89b5a75d478896fc4d53769517b}{decode\+QR} ()
+\begin{DoxyCompactList}\small\item\em A function to get the raw image, find the QR code, unmask the QR code and decode the QR code in the image to extract data of package ID. \end{DoxyCompactList}\item 
+std\+::vector$<$ uint8\+\_\+t $>$ \hyperlink{classQReader_a70931e64e2530fe9ba36e414d463dc93}{return\+Bytes} ()
+\begin{DoxyCompactList}\small\item\em Function to get the extracted data array. \end{DoxyCompactList}\item 
+void \hyperlink{classQReader_aa88a7446712229134e33d363b6219c7f}{set\+Image} (cv\+::\+Mat image)
+\begin{DoxyCompactList}\small\item\em Sets the value for the private value img. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class \hyperlink{classQReader}{Q\+Reader} has methods to get the image and decode the QR code in the image to extract data of package ID. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Q\+Reader@{Q\+Reader}!Q\+Reader@{Q\+Reader}}
+\index{Q\+Reader@{Q\+Reader}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{Q\+Reader()}{QReader()}}]{\setlength{\rightskip}{0pt plus 5cm}Q\+Reader\+::\+Q\+Reader (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_a88aa40e37ee8602e613b884eac08db36}{}\label{classQReader_a88aa40e37ee8602e613b884eac08db36}
+
+
+Constructs a object. 
+
+
+\begin{DoxyCode}
+56                  : it(nh) \{
+57   std::string str = \textcolor{stringliteral}{"unknown"};
+58   std::vector<uint8\_t> bytes(str.begin(), str.end());
+59   ROS\_INFO(\textcolor{stringliteral}{"Inside QReader Constructor"});
+60   imgSub = it.subscribe(\textcolor{stringliteral}{"/camera/rgb/image\_raw"}, 1, &\hyperlink{classQReader_a9d50ba0c8a2c6cea9c2bb00462b9f69c}{QReader::imageCb}, \textcolor{keyword}{this});
+61 \}
+\end{DoxyCode}
+\index{Q\+Reader@{Q\+Reader}!````~Q\+Reader@{$\sim$\+Q\+Reader}}
+\index{````~Q\+Reader@{$\sim$\+Q\+Reader}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{$\sim$\+Q\+Reader()}{~QReader()}}]{\setlength{\rightskip}{0pt plus 5cm}Q\+Reader\+::$\sim$\+Q\+Reader (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_af097eb209e44cff3f22154415fe36dc6}{}\label{classQReader_af097eb209e44cff3f22154415fe36dc6}
+
+
+Destroys the object. 
+
+
+\begin{DoxyCode}
+63 \{\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\index{Q\+Reader@{Q\+Reader}!decode\+QR@{decode\+QR}}
+\index{decode\+QR@{decode\+QR}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{decode\+Q\+R()}{decodeQR()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ uint8\+\_\+t $>$ Q\+Reader\+::decode\+QR (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_ab9ade89b5a75d478896fc4d53769517b}{}\label{classQReader_ab9ade89b5a75d478896fc4d53769517b}
+
+
+A function to get the raw image, find the QR code, unmask the QR code and decode the QR code in the image to extract data of package ID. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Bytes containing the data in QR code in U\+T\+F-\/8 format 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+154                                      \{
+155   ros::Duration(3.0).sleep();
+156   possibleCenters.clear();
+157   estimatedModuleSize.clear();
+158   ROS\_INFO\_STREAM(\textcolor{stringliteral}{"Decoding Image"});
+159   \textcolor{comment}{// Convert image to black and white}
+160   cv::cvtColor(img, img, CV\_BGR2HSV);
+161   inRange(img, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), img);
+162   ROS\_INFO\_STREAM(\textcolor{stringliteral}{"Checking QR code existence"});
+163   \textcolor{keywordtype}{bool} found = checkQCodeExists(img);
+164   std::vector<uint8\_t> bytes;
+165   \textcolor{comment}{// Check if QR code was found}
+166   \textcolor{keywordflow}{if} (found) \{
+167     ROS\_INFO\_STREAM(\textcolor{stringliteral}{"QR Code exists"});
+168     cv::Mat QR = warpToCode(img);
+169     std::vector<std::vector<bool> > bitMatrix = extractBits(QR);
+170 
+171     unmask(bitMatrix);
+172 
+173     bytes = decodeArray(bitMatrix);
+174   \} \textcolor{keywordflow}{else} \{
+175     bytes = \{0x75, 0x6E, 0x6B, 0x6E, 0x6F, 0x77, 0x6E\};  \textcolor{comment}{// unknown}
+176   \}
+177   \textcolor{keywordflow}{return} bytes;
+178 \}
+\end{DoxyCode}
+\index{Q\+Reader@{Q\+Reader}!image\+Cb@{image\+Cb}}
+\index{image\+Cb@{image\+Cb}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{image\+Cb(const sensor\+\_\+msgs\+::\+Image\+Const\+Ptr \&msg)}{imageCb(const sensor_msgs::ImageConstPtr &msg)}}]{\setlength{\rightskip}{0pt plus 5cm}void Q\+Reader\+::image\+Cb (
+\begin{DoxyParamCaption}
+\item[{const sensor\+\_\+msgs\+::\+Image\+Const\+Ptr \&}]{msg}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_a9d50ba0c8a2c6cea9c2bb00462b9f69c}{}\label{classQReader_a9d50ba0c8a2c6cea9c2bb00462b9f69c}
+
+
+A function to get the raw image, from the camera and convert it to cv\+::\+Mat format using cv bridge. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em The} & message to subcribe to get the image from the turtlebot camera.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+None 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+67                                                          \{
+68   cv\_bridge::CvImagePtr cvPtr;
+69   \textcolor{keywordflow}{try} \{
+70     cvPtr = cv\_bridge::toCvCopy(msg, sensor\_msgs::image\_encodings::BGR8);
+71     ROS\_INFO(\textcolor{stringliteral}{"Inside image callback"});
+72   \} \textcolor{keywordflow}{catch} (cv\_bridge::Exception& e) \{
+73     ROS\_ERROR(\textcolor{stringliteral}{"cv\_bridge exception: %s"}, e.what());
+74     \textcolor{keywordflow}{return};
+75   \}
+76   img = cvPtr->image;
+77   img = \hyperlink{classQReader_ac0f5e59eef0b0c3de524a5674a3b3881}{processFrame}();
+78 
+79   \textcolor{comment}{// Decode the QR code in the image}
+80   bytes = \hyperlink{classQReader_ab9ade89b5a75d478896fc4d53769517b}{decodeQR}();
+81 \}
+\end{DoxyCode}
+\index{Q\+Reader@{Q\+Reader}!process\+Frame@{process\+Frame}}
+\index{process\+Frame@{process\+Frame}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{process\+Frame()}{processFrame()}}]{\setlength{\rightskip}{0pt plus 5cm}cv\+::\+Mat Q\+Reader\+::process\+Frame (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_ac0f5e59eef0b0c3de524a5674a3b3881}{}\label{classQReader_ac0f5e59eef0b0c3de524a5674a3b3881}
+
+\begin{DoxyCode}
+83                             \{
+84   cv::Mat temp;
+85   cv::cvtColor(img, temp, CV\_BGR2HSV);
+86   inRange(temp, cv::Scalar(0, 0, 200, 0), cv::Scalar(180, 255, 255, 0), temp);
+87 
+88   std::vector<std::vector<cv::Point> > contours;
+89   std::vector<cv::Vec4i> hierarchy;
+90   findContours(temp, contours, hierarchy, CV\_RETR\_TREE, CV\_CHAIN\_APPROX\_SIMPLE,
+91                cv::Point(0, 0));
+92   \textcolor{comment}{// Threshold the counters}
+93   std::vector<std::vector<cv::Point> > contours\_poly(contours.size());
+94   std::vector<cv::Rect> boundRect(contours.size());
+95   cv::Mat roi(img.rows, img.cols, CV\_8UC3, cv::Scalar(0, 0, 0));
+96   cv::Mat dst = cv::Mat::zeros(roi.size(), CV\_32FC1);
+97   cv::Mat dst\_norm, dst\_norm\_scaled;
+98   cv::Mat result;
+99   std::vector<cv::Point2f> src;
+100   src.clear();
+101 
+102   \textcolor{comment}{// Detect corners of the QR code for appropriate warping}
+103   \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < contours.size(); i++) \{
+104     \textcolor{keywordflow}{if} (contourArea(contours[i]) > 40000) \{
+105       drawContours(roi, contours, i, cv::Scalar(255, 255, 255), CV\_FILLED);
+106       cv::cvtColor(roi, roi, CV\_BGR2GRAY);
+107       cornerHarris(roi, dst, 2, 3, 0.06);
+108       normalize(dst, dst\_norm, 0, 255, cv::NORM\_MINMAX, CV\_32FC1, cv::Mat());
+109       convertScaleAbs(dst\_norm, dst\_norm\_scaled);
+110       \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} x = 0; x < dst\_norm.rows; x++) \{
+111         \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} y = 0; y < dst\_norm.cols; y++) \{
+112           \textcolor{keywordflow}{if} (static\_cast<int>(dst\_norm.at<\textcolor{keywordtype}{float}>(x, y)) > 200) \{
+113             src.push\_back(cv::Point2f(y, x));
+114           \}
+115         \}
+116       \}
+117     \}
+118   \}
+119   ROS\_INFO(\textcolor{stringliteral}{"Number of corner points detected: %d"},
+120            static\_cast<int>(src.size()));
+121   std::vector<cv::Point2f> srcPoints;
+122   cv::Point2f topLeft, topRight, bottomRight, bottomLeft;
+123 
+124   \textcolor{keywordflow}{if} (src.size() == 4) \{
+125     std::sort(
+126         src.begin(), src.end(),
+127         [](\textcolor{keyword}{const} cv::Point2f& a, \textcolor{keyword}{const} cv::Point2f& b) \{ \textcolor{keywordflow}{return} a.x < b.x; \});
+128 
+129     \textcolor{keywordflow}{if} (src.at(0).x + src.at(0).y < src.at(1).x + src.at(1).y) \{
+130       topLeft = src.at(0);
+131       bottomLeft = src.at(1);
+132     \} \textcolor{keywordflow}{else} \{
+133       topLeft = src.at(1);
+134       bottomLeft = src.at(0);
+135     \}
+136     \textcolor{keywordflow}{if} (src.at(2).x + src.at(2).y < src.at(3).x + src.at(3).y) \{
+137       topRight = src.at(2);
+138       bottomRight = src.at(3);
+139     \} \textcolor{keywordflow}{else} \{
+140       topRight = src.at(3);
+141       bottomRight = src.at(2);
+142     \}
+143     srcPoints = \{topLeft, topRight, bottomLeft, bottomRight\};
+144 
+145     std::vector<cv::Point2f> dstPoints = \{
+146         cv::Point2f(0.0, 0.0), cv::Point2f(199.0, 0.0), cv::Point2f(0.0, 199.0),
+147         cv::Point2f(199.0, 199.0)\};
+148     cv::Mat transform = getPerspectiveTransform(srcPoints, dstPoints);
+149     warpPerspective(img, img, transform, cv::Size(200, 200), CV\_INTER\_LINEAR);
+150   \}
+151   \textcolor{keywordflow}{return} img;
+152 \}
+\end{DoxyCode}
+\index{Q\+Reader@{Q\+Reader}!return\+Bytes@{return\+Bytes}}
+\index{return\+Bytes@{return\+Bytes}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{return\+Bytes()}{returnBytes()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ uint8\+\_\+t $>$ Q\+Reader\+::return\+Bytes (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_a70931e64e2530fe9ba36e414d463dc93}{}\label{classQReader_a70931e64e2530fe9ba36e414d463dc93}
+
+
+Function to get the extracted data array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+array of bytes of data stored in the QR code 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+65 \{ \textcolor{keywordflow}{return} bytes; \}
+\end{DoxyCode}
+\index{Q\+Reader@{Q\+Reader}!set\+Image@{set\+Image}}
+\index{set\+Image@{set\+Image}!Q\+Reader@{Q\+Reader}}
+\subsubsection[{\texorpdfstring{set\+Image(cv\+::\+Mat image)}{setImage(cv::Mat image)}}]{\setlength{\rightskip}{0pt plus 5cm}void Q\+Reader\+::set\+Image (
+\begin{DoxyParamCaption}
+\item[{cv\+::\+Mat}]{image}
+\end{DoxyParamCaption}
+)}\hypertarget{classQReader_aa88a7446712229134e33d363b6219c7f}{}\label{classQReader_aa88a7446712229134e33d363b6219c7f}
+
+
+Sets the value for the private value img. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cv\+::\+Mat} & to set as value of img.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+732 \{ img = image; \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/package\+\_\+identification\+\_\+using\+\_\+turtlebot/\hyperlink{QReader_8hpp}{Q\+Reader.\+hpp}\item 
+src/\hyperlink{QReader_8cpp}{Q\+Reader.\+cpp}\end{DoxyCompactItemize}

@@ -1,0 +1,238 @@
+\hypertarget{PathPlannerTest_8cpp}{}\section{test/\+Path\+Planner\+Test.cpp File Reference}
+\label{PathPlannerTest_8cpp}\index{test/\+Path\+Planner\+Test.\+cpp@{test/\+Path\+Planner\+Test.\+cpp}}
+
+
+file to test the class \hyperlink{classPathPlanner}{Path\+Planner}  
+
+
+{\ttfamily \#include $<$cv\+\_\+bridge/cv\+\_\+bridge.\+h$>$}\\*
+{\ttfamily \#include $<$gtest/gtest.\+h$>$}\\*
+{\ttfamily \#include $<$ros/connection\+\_\+manager.\+h$>$}\\*
+{\ttfamily \#include $<$ros/package.\+h$>$}\\*
+{\ttfamily \#include $<$ros/ros.\+h$>$}\\*
+{\ttfamily \#include $<$vector$>$}\\*
+{\ttfamily \#include \char`\"{}package\+\_\+identification\+\_\+using\+\_\+turtlebot/\+Path\+Planner.\+hpp\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{PathPlannerTest_8cpp_a4210548f7e6e29792ba8dd73b6477f32}{test\+Cb} (const geometry\+\_\+msgs\+::\+Pose\+With\+Covariance\+Stamped msg)
+\item 
+\hyperlink{PathPlannerTest_8cpp_a2a853ee87bbe18574935792db5dd2018}{T\+E\+ST} (publish\+Init\+Pose\+Test, test\+Planner1)
+\begin{DoxyCompactList}\small\item\em Test to check inti\+Pose publisher. \end{DoxyCompactList}\item 
+\hyperlink{PathPlannerTest_8cpp_a4c69dd0c4fb957d80fcad44fa0776fb1}{T\+E\+ST} (find\+Package\+Test, test\+Planner2)
+\begin{DoxyCompactList}\small\item\em Test if find\+Package executes successfully. \end{DoxyCompactList}\item 
+\hyperlink{PathPlannerTest_8cpp_ad72124c80c31431cd6327f8f832726c7}{T\+E\+ST} (call\+Vision\+Test, test\+Planner3)
+\begin{DoxyCompactList}\small\item\em Test to check if QR code is properly detected. \end{DoxyCompactList}\item 
+\hyperlink{PathPlannerTest_8cpp_aff1075331969fec85324fc190cbbd134}{T\+E\+ST} (wait\+Package\+Detection, detection\+Correction)
+\begin{DoxyCompactList}\small\item\em Test to check if a slanted QR code is properly detected. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+file to test the class \hyperlink{classPathPlanner}{Path\+Planner} 
+
+\begin{DoxyAuthor}{Author}
+Rajendra\+Mayavan 
+
+Adarsh Jagan
+\end{DoxyAuthor}
+\begin{DoxyCopyright}{Copyright}
+B\+S\+D-\/3-\/\+Clause License Copyright (c) 2018, Mayavan, Adarsh Jagan Sathyamoorthy
+\end{DoxyCopyright}
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met\+:
+
+
+\begin{DoxyEnumerate}
+\item Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+\item Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+\item Neither the name of the copyright holder nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+\end{DoxyEnumerate}
+
+T\+H\+IS S\+O\+F\+T\+W\+A\+RE IS P\+R\+O\+V\+I\+D\+ED BY T\+HE C\+O\+P\+Y\+R\+I\+G\+HT H\+O\+L\+D\+E\+RS A\+ND C\+O\+N\+T\+R\+I\+B\+U\+T\+O\+RS \char`\"{}\+A\+S
+\+I\+S\char`\"{} A\+ND A\+NY E\+X\+P\+R\+E\+SS OR I\+M\+P\+L\+I\+ED W\+A\+R\+R\+A\+N\+T\+I\+ES, I\+N\+C\+L\+U\+D\+I\+NG, B\+UT N\+OT L\+I\+M\+I\+T\+ED TO, T\+HE I\+M\+P\+L\+I\+ED W\+A\+R\+R\+A\+N\+T\+I\+ES OF M\+E\+R\+C\+H\+A\+N\+T\+A\+B\+I\+L\+I\+TY A\+ND F\+I\+T\+N\+E\+SS F\+OR A P\+A\+R\+T\+I\+C\+U\+L\+AR P\+U\+R\+P\+O\+SE A\+RE D\+I\+S\+C\+L\+A\+I\+M\+ED. IN NO E\+V\+E\+NT S\+H\+A\+LL T\+HE C\+O\+P\+Y\+R\+I\+G\+HT H\+O\+L\+D\+ER OR C\+O\+N\+T\+R\+I\+B\+U\+T\+O\+RS BE L\+I\+A\+B\+LE F\+OR A\+NY D\+I\+R\+E\+CT, I\+N\+D\+I\+R\+E\+CT, I\+N\+C\+I\+D\+E\+N\+T\+AL, S\+P\+E\+C\+I\+AL, E\+X\+E\+M\+P\+L\+A\+RY, OR C\+O\+N\+S\+E\+Q\+U\+E\+N\+T\+I\+AL D\+A\+M\+A\+G\+ES (I\+N\+C\+L\+U\+D\+I\+NG, B\+UT N\+OT L\+I\+M\+I\+T\+ED TO, P\+R\+O\+C\+U\+R\+E\+M\+E\+NT OF S\+U\+B\+S\+T\+I\+T\+U\+TE G\+O\+O\+DS OR S\+E\+R\+V\+I\+C\+ES; L\+O\+SS OF U\+SE, D\+A\+TA, OR P\+R\+O\+F\+I\+TS; OR B\+U\+S\+I\+N\+E\+SS I\+N\+T\+E\+R\+R\+U\+P\+T\+I\+ON) H\+O\+W\+E\+V\+ER C\+A\+U\+S\+ED A\+ND ON A\+NY T\+H\+E\+O\+RY OF L\+I\+A\+B\+I\+L\+I\+TY, W\+H\+E\+T\+H\+ER IN C\+O\+N\+T\+R\+A\+CT, S\+T\+R\+I\+CT L\+I\+A\+B\+I\+L\+I\+TY, OR T\+O\+RT (I\+N\+C\+L\+U\+D\+I\+NG N\+E\+G\+L\+I\+G\+E\+N\+CE OR O\+T\+H\+E\+R\+W\+I\+SE) A\+R\+I\+S\+I\+NG IN A\+NY W\+AY O\+UT OF T\+HE U\+SE OF T\+H\+IS S\+O\+F\+T\+W\+A\+RE, E\+V\+EN IF A\+D\+V\+I\+S\+ED OF T\+HE P\+O\+S\+S\+I\+B\+I\+L\+I\+TY OF S\+U\+CH D\+A\+M\+A\+GE. 
+
+\subsection{Function Documentation}
+\index{Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(publish\+Init\+Pose\+Test, test\+Planner1)}{TEST(publishInitPoseTest, testPlanner1)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{publish\+Init\+Pose\+Test}]{, }
+\item[{test\+Planner1}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{PathPlannerTest_8cpp_a2a853ee87bbe18574935792db5dd2018}{}\label{PathPlannerTest_8cpp_a2a853ee87bbe18574935792db5dd2018}
+
+
+Test to check inti\+Pose publisher. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em T\+E\+S\+T\+Suite} & \\
+\hline
+\mbox{\tt in}  & {\em test} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+57                                         \{
+58   ros::NodeHandle \hyperlink{test_2main_8cpp_a7d6d3de9ddf4963eb3ea112920944a87}{nh};
+59   \hyperlink{classPathPlanner}{PathPlanner} planner(\{\{0.0, 0.0, 0.0, 1.0\}\});
+60   ros::Publisher pub = planner.\hyperlink{classPathPlanner_a58568f3cc90cf9670d9b1cd3aff2e466}{returnPublisher}();
+61   ros::Subscriber sub = nh.subscribe(\textcolor{stringliteral}{"/initialpose"}, 1, &\hyperlink{PathPlannerTest_8cpp_a4210548f7e6e29792ba8dd73b6477f32}{testCb});
+62   EXPECT\_EQ(pub.getNumSubscribers(), 1U);
+63   EXPECT\_EQ(sub.getNumPublishers(), 1U);
+64   std::vector<double> res = planner.callPublisher(2.0, 1.0, 1.0);
+65   ASSERT\_EQ(res.at(0), 2.0);
+66   ASSERT\_EQ(res.at(1), 1.0);
+67   ASSERT\_EQ(res.at(2), 1.0);
+68 \}
+\end{DoxyCode}
+\index{Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(find\+Package\+Test, test\+Planner2)}{TEST(findPackageTest, testPlanner2)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{find\+Package\+Test}]{, }
+\item[{test\+Planner2}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{PathPlannerTest_8cpp_a4c69dd0c4fb957d80fcad44fa0776fb1}{}\label{PathPlannerTest_8cpp_a4c69dd0c4fb957d80fcad44fa0776fb1}
+
+
+Test if find\+Package executes successfully. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em T\+E\+S\+T\+Suite} & \\
+\hline
+\mbox{\tt in}  & {\em test} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+76                                     \{
+77   \hyperlink{classPathPlanner}{PathPlanner} planner(\{\{-2.0, -3.0, 0.0, 1.0\}, \{-1.0, -2.0, 0.0, 1.0\}\});
+78   std::vector<std::string> packID;
+79   packID.push\_back(\textcolor{stringliteral}{"pack#1"});
+80   packID.push\_back(\textcolor{stringliteral}{"pack#2"});
+81   \textcolor{keywordtype}{int} i = planner.\hyperlink{classPathPlanner_a6a705be83291d487f6b0c06ef7838c02}{findPackage}(packID);
+82   ASSERT\_EQ(i, 0);
+83 \}
+\end{DoxyCode}
+\index{Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(call\+Vision\+Test, test\+Planner3)}{TEST(callVisionTest, testPlanner3)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{call\+Vision\+Test}]{, }
+\item[{test\+Planner3}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{PathPlannerTest_8cpp_ad72124c80c31431cd6327f8f832726c7}{}\label{PathPlannerTest_8cpp_ad72124c80c31431cd6327f8f832726c7}
+
+
+Test to check if QR code is properly detected. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em T\+E\+S\+T\+Suite} & \\
+\hline
+\mbox{\tt in}  & {\em test} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+91                                    \{
+92   ros::NodeHandle \hyperlink{test_2main_8cpp_a7d6d3de9ddf4963eb3ea112920944a87}{nh};
+93   image\_transport::ImageTransport it(nh);
+94   \textcolor{comment}{// Advertise a known image on camera/rgb/image\_raw topic}
+95   image\_transport::Publisher pub = it.advertise(\textcolor{stringliteral}{"camera/rgb/image\_raw"}, 1);
+96   std::string fileLocation =
+97       ros::package::getPath(\textcolor{stringliteral}{"package\_identification\_using\_turtlebot"}) +
+98       \textcolor{stringliteral}{"/data/pack4.png"};
+99   cv::Mat image = cv::imread(fileLocation);
+100   cv::waitKey(3);
+101   sensor\_msgs::ImagePtr msg =
+102       cv\_bridge::CvImage(std\_msgs::Header(), \textcolor{stringliteral}{"bgr8"}, image).toImageMsg();
+103   ros::Rate loop\_rate(5);
+104   \hyperlink{classPathPlanner}{PathPlanner} planner(\{\{-2.0, -3.0, 0.0, 1.0\}, \{-1.0, -2.0, 0.0, 1.0\}\});
+105   std::vector<std::string> packID;
+106   ros::Time start\_time = ros::Time::now();
+107   ros::Duration timeout(15.0);
+108   \textcolor{comment}{// If the test is not completed within timeout the test fails}
+109   \textcolor{keywordflow}{while} (ros::Time::now() - start\_time < timeout) \{
+110     pub.publish(msg);
+111     packID = planner.callVision(packID);
+112     \textcolor{keywordflow}{if} (packID.at(0).substr(0, 4) == \textcolor{stringliteral}{"pack"}) \textcolor{keywordflow}{break};
+113     loop\_rate.sleep();
+114   \}
+115 
+116   ASSERT\_STREQ(\textcolor{stringliteral}{"pack#4"}, (packID.at(0)).c\_str());
+117 \}
+\end{DoxyCode}
+\index{Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}!T\+E\+ST@{T\+E\+ST}}
+\index{T\+E\+ST@{T\+E\+ST}!Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}}
+\subsubsection[{\texorpdfstring{T\+E\+S\+T(wait\+Package\+Detection, detection\+Correction)}{TEST(waitPackageDetection, detectionCorrection)}}]{\setlength{\rightskip}{0pt plus 5cm}T\+E\+ST (
+\begin{DoxyParamCaption}
+\item[{wait\+Package\+Detection}]{, }
+\item[{detection\+Correction}]{}
+\end{DoxyParamCaption}
+)}\hypertarget{PathPlannerTest_8cpp_aff1075331969fec85324fc190cbbd134}{}\label{PathPlannerTest_8cpp_aff1075331969fec85324fc190cbbd134}
+
+
+Test to check if a slanted QR code is properly detected. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em T\+E\+S\+T\+Suite} & \\
+\hline
+\mbox{\tt in}  & {\em test} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+125                                                 \{
+126   ros::NodeHandle \hyperlink{test_2main_8cpp_a7d6d3de9ddf4963eb3ea112920944a87}{nh};
+127   image\_transport::ImageTransport it(nh);
+128   \textcolor{comment}{// Advertise a known image on camera/rgb/image\_raw topic}
+129   image\_transport::Publisher pub = it.advertise(\textcolor{stringliteral}{"camera/rgb/image\_raw"}, 1);
+130   std::string fileLocation =
+131       ros::package::getPath(\textcolor{stringliteral}{"package\_identification\_using\_turtlebot"}) +
+132       \textcolor{stringliteral}{"/data/pack3\_slant.png"};
+133   cv::Mat image = cv::imread(fileLocation);
+134   cv::waitKey(3);
+135   sensor\_msgs::ImagePtr msg =
+136       cv\_bridge::CvImage(std\_msgs::Header(), \textcolor{stringliteral}{"bgr8"}, image).toImageMsg();
+137   ros::Rate loop\_rate(5);
+138   \hyperlink{classPathPlanner}{PathPlanner} planner(\{\{-2.0, -3.0, 0.0, 1.0\}, \{-1.0, -2.0, 0.0, 1.0\}\});
+139   ros::Time start\_time = ros::Time::now();
+140   ros::Duration timeout(15.0);
+141   std::string result;
+142   \textcolor{comment}{// If the test is not completed within timeout the test fails}
+143   \textcolor{keywordflow}{while} (ros::Time::now() - start\_time < timeout) \{
+144     pub.publish(msg);
+145     std::string incorrectDetection = \textcolor{stringliteral}{"hello"};
+146     result = planner.waitPackageDetection(incorrectDetection);
+147     \textcolor{keywordflow}{if} (result.substr(0, 4) == \textcolor{stringliteral}{"pack"}) \textcolor{keywordflow}{break};
+148     loop\_rate.sleep();
+149   \}
+150   ASSERT\_STREQ(\textcolor{stringliteral}{"pack#3"}, result.c\_str());
+151 \}
+\end{DoxyCode}
+\index{Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}!test\+Cb@{test\+Cb}}
+\index{test\+Cb@{test\+Cb}!Path\+Planner\+Test.\+cpp@{Path\+Planner\+Test.\+cpp}}
+\subsubsection[{\texorpdfstring{test\+Cb(const geometry\+\_\+msgs\+::\+Pose\+With\+Covariance\+Stamped msg)}{testCb(const geometry_msgs::PoseWithCovarianceStamped msg)}}]{\setlength{\rightskip}{0pt plus 5cm}void test\+Cb (
+\begin{DoxyParamCaption}
+\item[{const geometry\+\_\+msgs\+::\+Pose\+With\+Covariance\+Stamped}]{msg}
+\end{DoxyParamCaption}
+)}\hypertarget{PathPlannerTest_8cpp_a4210548f7e6e29792ba8dd73b6477f32}{}\label{PathPlannerTest_8cpp_a4210548f7e6e29792ba8dd73b6477f32}
+
+\begin{DoxyCode}
+49 \{\}
+\end{DoxyCode}

@@ -1,0 +1,38 @@
+\hypertarget{src_2main_8cpp}{}\section{src/main.cpp File Reference}
+\label{src_2main_8cpp}\index{src/main.\+cpp@{src/main.\+cpp}}
+{\ttfamily \#include $<$ros/ros.\+h$>$}\\*
+{\ttfamily \#include \char`\"{}package\+\_\+identification\+\_\+using\+\_\+turtlebot/\+Path\+Planner.\+hpp\char`\"{}}\\*
+{\ttfamily \#include \char`\"{}package\+\_\+identification\+\_\+using\+\_\+turtlebot/\+Q\+Reader.\+hpp\char`\"{}}\\*
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+int \hyperlink{src_2main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{main} (int argc, char $\ast$$\ast$argv)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\index{src/main.\+cpp@{src/main.\+cpp}!main@{main}}
+\index{main@{main}!src/main.\+cpp@{src/main.\+cpp}}
+\subsubsection[{\texorpdfstring{main(int argc, char $\ast$$\ast$argv)}{main(int argc, char **argv)}}]{\setlength{\rightskip}{0pt plus 5cm}int main (
+\begin{DoxyParamCaption}
+\item[{int}]{argc, }
+\item[{char $\ast$$\ast$}]{argv}
+\end{DoxyParamCaption}
+)}\hypertarget{src_2main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}{}\label{src_2main_8cpp_a3c04138a5bfe5d72780bb7e82a18e627}
+
+\begin{DoxyCode}
+44                                 \{
+45   ros::init(argc, argv, \textcolor{stringliteral}{"QBot"});
+46   \textcolor{comment}{// Initialization}
+47   std::vector<std::vector<double>> points = \{\{2.4, 0.30, 0.1, 0.9\},
+48                                              \{2.5, 1.808, 0.0, 1.0\},
+49                                              \{2.4, 3.175, 0.0, 1.0\},
+50                                              \{2.4, 4.36, 0.0, 1.0\},
+51                                              \{0.0, 0.0, 0.0, 1.0\}\};
+52   \hyperlink{classPathPlanner}{PathPlanner} planner(points);
+53   std::vector<std::string> packID = planner.sendGoals();
+54   \textcolor{keywordtype}{int} k = planner.findPackage(packID);
+55 
+56   \textcolor{keywordflow}{return} 0;
+57 \}
+\end{DoxyCode}

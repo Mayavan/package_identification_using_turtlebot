@@ -1,0 +1,180 @@
+\href{https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot}{\tt }
+
+\href{https://coveralls.io/github/Mayavan/Package_Identification_using_Turtlebot?branch=master}{\tt }
+
+\href{https://opensource.org/licenses/BSD-3-Clause}{\tt }
+
+\subsection*{Overview}
+
+Robots have been used to improve efficiency in a various tasks in warehouses such as package handling, identification and organization. This project aims to simulate the use of Turtlebot in identifying packages with QR codes, in a warehouse setting. The simulation is implemented in Gazebo. R\+OS packages such as gmapping, and teleop\+\_\+twist\+\_\+keyboard are used for mapping the environment in the simulation, while move\+\_\+base is used for navigation.
+
+ 
+
+Our main focus in this project is Q\+R-\/code decoding. Image stream from Turtlebot\textquotesingle{}s simulated camera is subscribed and processed to obtain a clear front view of the QR code. The masking and encoding type of the QR code is detected, and it is unmasked to extract a bit stream, which is then coverted to a string. This resultant string is the package ID. Each package ID must have a valid prefix to ensure that appropriate packages have arrived at the warehouse. In our case we use \char`\"{}pack\char`\"{} as a valid prefix. Since there can be errors in odometry in the Turtlebot, it may not always reliably orient itself near the packages which results in a slanted perspective.\+To ensure that the package identification is robust to such odometry errors, we threshold and isolate the QR code first and then detect Harris corners. These corner points are then used to warp the perspective of the QR code. Only then the decoding is applyed to the image.
+
+ 
+
+The scenario is that some new packages of unknown identities have arrived at the warehouse and are stored in a location allotted to \char`\"{}new arrivals\char`\"{}. This location is generally known, along with the floor plan of the warehouse. The Turtlebot starts from another corner of the warehouse and moves towards the packages avoiding all \char`\"{}mapped\char`\"{} obstacles as well as \char`\"{}unmapped\char`\"{} obstacles (the dustbin in front of one of the packages is unmapped.) The Turtlebot then sequentially moves from one package to another identifying and storing the package I\+Ds and locations from which each package can be accessed.
+
+ 
+
+\subsection*{S\+IP}
+
+The product backlog, iteration log and time log sheets can be found \href{https://docs.google.com/spreadsheets/d/1RWIvnbdE3t9a1EoGMhIvIEiinyssCJ5bO6Itf2WrIy8/edit?usp=sharing}{\tt here.}
+
+The sprint planning and review document can be viewed \href{https://docs.google.com/document/d/1Zp-uh8ouf0MiTm6qED7pZ7B7P1d_7mmyq6RMpuOTYXM/edit?usp=sharing}{\tt here.}
+
+\subsection*{Dependencies}
+
+This project is run on top of Ubuntu 16.\+04 with R\+OS Kinetic and Gazebo 7.\+14.
+
+To install R\+OS Kinetic in Ubuntu 16.\+04, follow the steps given \href{http://wiki.ros.org/kinetic/Installation/Ubuntu}{\tt here}. Catkin can be installed from \href{http://wiki.ros.org/catkin}{\tt here}.
+
+R\+OS packages such as move\+\_\+base, actionlib, and gazebo\+\_\+ros packages should be installed as\+:
+
+
+\begin{DoxyCode}
+1 sudo apt-get install ros-kinetic-move-base ros-kinetic-actionlib ros-kinetic-gazebo-ros
+\end{DoxyCode}
+
+
+Turtlebot packages that are required can be installed as\+:
+
+
+\begin{DoxyCode}
+1 sudo apt-get install ros-kinetic-turtlebot-gazebo ros-kinetic-turtlebot-apps
+       ros-kinetic-turtlebot-rviz-launchers
+\end{DoxyCode}
+
+
+For the vision aspects of the project, we use Open\+CV 3.\+3.\+1. It can be installed from \href{https://www.learnopencv.com/install-opencv3-on-ubuntu/}{\tt here}
+
+\subsection*{Download}
+
+Before building the package, ensure that your catkin workspace is set up properly. In a new terminal, type the following commands\+:
+
+
+\begin{DoxyCode}
+1 mkdir -p ~/catkin\_ws/src
+2 cd ~/catkin\_ws/
+3 catkin\_make
+4 source devel/setup.bash
+\end{DoxyCode}
+ For more details follow the steps \href{http://wiki.ros.org/catkin/Tutorials/create_a_workspace}{\tt here}
+
+Download this repository inside src directory inside your catkin workspace. 
+\begin{DoxyCode}
+1 cd ~/catkin\_ws/src/
+2 git clone https://github.com/Mayavan/Package\_Identification\_using\_Turtlebot.git
+\end{DoxyCode}
+
+
+\subsection*{Build}
+
+After cloning, you should see a package inside src. To build this package, when you\textquotesingle{}re inside the src folder\+: 
+\begin{DoxyCode}
+1 cd ..
+2 catkin\_make
+3 source devel/setup.bash
+\end{DoxyCode}
+
+
+\subsection*{Running Demo}
+
+To run a fullfledged demo of the Turtlebot in the warehouse setting identifying packages, give\+:
+
+
+\begin{DoxyCode}
+1 roslaunch package\_identification\_using\_turtlebot demo.launch
+\end{DoxyCode}
+
+
+In Gazebo, the Turtlebot spawns at (-\/3, -\/3) and starts navigating towards the packages. Once a goal is reached, R\+OS info messages will display the state if the identification (whether package is I\+Ded or Turtlebot is waiting for proper identification). When the four packages are detected, the Turtlebot moves to the origin. The package I\+Ds and their locations are then printed and code exits.
+
+Additionally, the navigation, global and local costmaps can be viewed in Rviz. 
+\begin{DoxyCode}
+1 roslaunch turtlebot\_rviz\_launchers view\_navigation.launch
+\end{DoxyCode}
+ For additional information see \href{http://learn.turtlebot.com/2015/02/03/8/}{\tt here}. 
+
+ 
+
+The code related to this demo can be found in the src, launch and include folders.
+
+\subsection*{Test}
+
+To run the test cases, run\+: 
+\begin{DoxyCode}
+1 rostest package\_identification\_using\_turtlebot Qbot.test
+\end{DoxyCode}
+
+
+All test cases in your catkin workspace can be run while compiling by\+: 
+\begin{DoxyCode}
+1 catkin\_make run\_tests
+\end{DoxyCode}
+
+
+This runs 12 test cases for various methods in the \hyperlink{classPathPlanner}{Path\+Planner} and \hyperlink{classQReader}{Q\+Reader} classes. The code for the tests can be found in the test folder.
+
+\subsection*{Doxygen Documentation}
+
+To install Doxygen\+: 
+\begin{DoxyCode}
+1 sudo apt-get install doxygen
+\end{DoxyCode}
+ To generate Doxygen documentation, run\+: 
+\begin{DoxyCode}
+1 doxygen ./Doxygen
+\end{DoxyCode}
+
+
+\subsection*{Known Issues and Bugs}
+
+
+\begin{DoxyItemize}
+\item In very rare situations, the Turtlebot might get stuck for sometime in detecting QR codes if 4 corner points of the QR code are not detected. This is mainly due to the simulated errors in odometry in Gazebo which results in very slanted perspectives. Another solution is to further tune the parameters in Harris corner detection to detect more points (which is kepy conservative as of now).
+\item The move\+\_\+base action client in the code has not been tested due to dependency issues for the turtlebot\+\_\+gazebo packages in Travis. Testing this code would increase coverage to 97-\/98\%.
+\end{DoxyItemize}
+
+\#\# License 
+\begin{DoxyCode}
+1 Copyright (c) 2018, Mayavan,  Adarsh Jagan Sathyamoorthy 
+2 
+3 Redistribution and use in source and binary forms, with or without  
+4 modification, are permitted provided that the following conditions are 
+5 met:
+6 
+7 1. Redistributions of source code must retain the above copyright notice, 
+8 this list of conditions and the following disclaimer.
+9 
+10 2. Redistributions in binary form must reproduce the above copyright 
+11 notice, this list of conditions and the following disclaimer in the   
+12 documentation and/or other materials provided with the distribution.
+13 
+14 3. Neither the name of the copyright holder nor the names of its 
+15 contributors may be used to endorse or promote products derived from this 
+16 software without specific prior written permission.
+17 
+18 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
+19 IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+20 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+21 PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+22 CONTRIBUTORS BE 
+23 LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+24 CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+25 SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+26 INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+27 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+28 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+29 THE POSSIBILITY OF SUCH DAMAGE.
+\end{DoxyCode}
+
+
+\subsection*{Authors}
+
+
+\begin{DoxyItemize}
+\item Adarsh Jagan Sathyamoorthy Major\+: I am a 2nd year Robotics graduate student at U\+MD College Park. I have a Bachelors degree in Electronics and Communication from National Institute of Technology-\/ Tiruchirapalli, India. My primary interests are Planning, computer vision, and robot learning. For more about me, please see my \href{https://www.linkedin.com/in/adarsh-jagan-sathyamoorthy-6b6726b3/}{\tt linkedin}. Email\+: \href{mailto:asathyam@umd.edu}{\tt asathyam@umd.\+edu}
+\item Rajendra\+Mayavan Rajendran Sathyam\+: I am doing my second year master\textquotesingle{}s in Robotics. I completed my Bachelors in Electrical and Electronics engineering in Anna University, Chennai, India. I am interested in Industrial Automation and computer vision. E-\/\+Mail\+: \href{mailto:mayavan@umd.edu}{\tt mayavan@umd.\+edu} 
+\end{DoxyItemize}

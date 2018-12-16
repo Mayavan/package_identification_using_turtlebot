@@ -1,0 +1,335 @@
+\hypertarget{classPathPlanner}{}\section{Path\+Planner Class Reference}
+\label{classPathPlanner}\index{Path\+Planner@{Path\+Planner}}
+
+
+Class \hyperlink{classPathPlanner}{Path\+Planner} has methods send goal points and initial pose of the turtlebot to move\+\_\+base package. Once the packages are identified, this class prints the package I\+Ds and locations.  
+
+
+
+
+{\ttfamily \#include $<$Path\+Planner.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classPathPlanner_aba3c35cb189f1d3838ad72b531ecc0b0}{Path\+Planner} (std\+::vector$<$ std\+::vector$<$ double $>$$>$)
+\begin{DoxyCompactList}\small\item\em Constructor of the \hyperlink{classPathPlanner}{Path\+Planner} class. \end{DoxyCompactList}\item 
+\hyperlink{classPathPlanner_a61bd61f848e519df56b75eddd3732ab8}{$\sim$\+Path\+Planner} ()
+\begin{DoxyCompactList}\small\item\em Destructor of the \hyperlink{classPathPlanner}{Path\+Planner} class. \end{DoxyCompactList}\item 
+ros\+::\+Publisher \hyperlink{classPathPlanner_a58568f3cc90cf9670d9b1cd3aff2e466}{return\+Publisher} ()
+\begin{DoxyCompactList}\small\item\em Method that returns publisher object. \end{DoxyCompactList}\item 
+std\+::vector$<$ double $>$ \hyperlink{classPathPlanner_aded9b5b27b3ba0369390f37a991c431a}{call\+Publisher} (double, double, double)
+\begin{DoxyCompactList}\small\item\em Method to call publish\+Init\+Pose. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \hyperlink{classPathPlanner_a8ea688c30b9c9ae09330aa55242ba6e0}{call\+Vision} (std\+::vector$<$ std\+::string $>$)
+\begin{DoxyCompactList}\small\item\em Method to call callback function from \hyperlink{classQReader}{Q\+Reader} class. \end{DoxyCompactList}\item 
+std\+::vector$<$ std\+::string $>$ \hyperlink{classPathPlanner_a49eccb73ef5e4d732d50e2b741f5dd53}{send\+Goals} ()
+\begin{DoxyCompactList}\small\item\em Method to send goals to move\+\_\+base action server. \end{DoxyCompactList}\item 
+int \hyperlink{classPathPlanner_a6a705be83291d487f6b0c06ef7838c02}{find\+Package} (std\+::vector$<$ std\+::string $>$)
+\begin{DoxyCompactList}\small\item\em Method to print the pack\+I\+Ds and their location where to find them. \end{DoxyCompactList}\item 
+std\+::string \hyperlink{classPathPlanner_aa21d8bbc74638db9bf458caa0f7310b3}{wait\+Package\+Detection} (std\+::string)
+\begin{DoxyCompactList}\small\item\em Method to try again if the package detection is faulty. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class \hyperlink{classPathPlanner}{Path\+Planner} has methods send goal points and initial pose of the turtlebot to move\+\_\+base package. Once the packages are identified, this class prints the package I\+Ds and locations. 
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Path\+Planner@{Path\+Planner}!Path\+Planner@{Path\+Planner}}
+\index{Path\+Planner@{Path\+Planner}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{Path\+Planner(std\+::vector$<$ std\+::vector$<$ double $>$$>$)}{PathPlanner(std::vector< std::vector< double >>)}}]{\setlength{\rightskip}{0pt plus 5cm}Path\+Planner\+::\+Path\+Planner (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ std\+::vector$<$ double $>$$>$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [explicit]}}\hypertarget{classPathPlanner_aba3c35cb189f1d3838ad72b531ecc0b0}{}\label{classPathPlanner_aba3c35cb189f1d3838ad72b531ecc0b0}
+
+
+Constructor of the \hyperlink{classPathPlanner}{Path\+Planner} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em points} & of type std\+::vector$<$std\+::vector$<$double$>$$>$ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+49                                                              \{
+50   initPosePub = nh.advertise<geometry\_msgs::PoseWithCovarianceStamped>(
+51       \textcolor{stringliteral}{"/initialpose"}, 1000);
+52   move\_base\_msgs::MoveBaseGoal targetPose;
+53   \textcolor{comment}{// Initialize the intial pose}
+54   initialPose.header.frame\_id = \textcolor{stringliteral}{"map"};
+55   initialPose.pose.pose.position.x = 0.0;
+56   initialPose.pose.pose.position.y = 0.0;
+57   initialPose.pose.pose.orientation.w = 1.0;
+58   counter = 0;
+59 
+60   \textcolor{comment}{// Add the points to the goal vector}
+61   targetPose.target\_pose.header.frame\_id = \textcolor{stringliteral}{"map"};
+62   targetPose.target\_pose.header.stamp = ros::Time::now();
+63   \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i = points.begin(); i != points.end() && counter < points.size();
+64        i++) \{
+65     targetPose.target\_pose.pose.position.x = (*i).at(0);
+66     targetPose.target\_pose.pose.position.y = (*i).at(1);
+67     targetPose.target\_pose.pose.orientation.z = (*i).at(2);
+68     targetPose.target\_pose.pose.orientation.w = (*i).at(3);
+69     goal.push\_back(targetPose);
+70   \}
+71 \}
+\end{DoxyCode}
+\index{Path\+Planner@{Path\+Planner}!````~Path\+Planner@{$\sim$\+Path\+Planner}}
+\index{````~Path\+Planner@{$\sim$\+Path\+Planner}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{$\sim$\+Path\+Planner()}{~PathPlanner()}}]{\setlength{\rightskip}{0pt plus 5cm}Path\+Planner\+::$\sim$\+Path\+Planner (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_a61bd61f848e519df56b75eddd3732ab8}{}\label{classPathPlanner_a61bd61f848e519df56b75eddd3732ab8}
+
+
+Destructor of the \hyperlink{classPathPlanner}{Path\+Planner} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+73 \{\}
+\end{DoxyCode}
+
+
+\subsection{Member Function Documentation}
+\index{Path\+Planner@{Path\+Planner}!call\+Publisher@{call\+Publisher}}
+\index{call\+Publisher@{call\+Publisher}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{call\+Publisher(double, double, double)}{callPublisher(double, double, double)}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ double $>$ Path\+Planner\+::call\+Publisher (
+\begin{DoxyParamCaption}
+\item[{double}]{x, }
+\item[{double}]{y, }
+\item[{double}]{w}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_aded9b5b27b3ba0369390f37a991c431a}{}\label{classPathPlanner_aded9b5b27b3ba0369390f37a991c431a}
+
+
+Method to call publish\+Init\+Pose. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em x} & of type double \\
+\hline
+{\em y} & of type double \\
+\hline
+{\em w} & of type double \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+init\+Pose of type std\+::vector$<$double$>$ 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+93                                                                          \{
+94   \textcolor{comment}{// Calls the private class (For rostest)}
+95   \textcolor{keywordflow}{return} publishInitPose(x, y, w);
+96 \}
+\end{DoxyCode}
+\index{Path\+Planner@{Path\+Planner}!call\+Vision@{call\+Vision}}
+\index{call\+Vision@{call\+Vision}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{call\+Vision(std\+::vector$<$ std\+::string $>$)}{callVision(std::vector< std::string >)}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::string $>$ Path\+Planner\+::call\+Vision (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ std\+::string $>$}]{pack\+ID}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_a8ea688c30b9c9ae09330aa55242ba6e0}{}\label{classPathPlanner_a8ea688c30b9c9ae09330aa55242ba6e0}
+
+
+Method to call callback function from \hyperlink{classQReader}{Q\+Reader} class. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em object} & of \hyperlink{classQReader}{Q\+Reader} class \\
+\hline
+{\em pack\+ID} & of type std\+::vector$<$std\+::string$>$ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pack\+ID of type std\+::vector$<$std\+::string$>$ 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+115                                  \{
+116   \textcolor{comment}{// Call image callback}
+117   ros::spinOnce();
+118   \textcolor{comment}{// Get the updated result}
+119   std::vector<uint8\_t> result = reader.\hyperlink{classQReader_a70931e64e2530fe9ba36e414d463dc93}{returnBytes}();
+120   std::string str;
+121   str.assign(result.begin(), result.end());
+122   ROS\_INFO(\textcolor{stringliteral}{"Package ID is: %s \(\backslash\)n"}, str.c\_str());
+123 
+124   packID.push\_back(\hyperlink{classPathPlanner_aa21d8bbc74638db9bf458caa0f7310b3}{waitPackageDetection}(str));
+125 
+126   \textcolor{keywordflow}{return} packID;
+127 \}
+\end{DoxyCode}
+\index{Path\+Planner@{Path\+Planner}!find\+Package@{find\+Package}}
+\index{find\+Package@{find\+Package}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{find\+Package(std\+::vector$<$ std\+::string $>$)}{findPackage(std::vector< std::string >)}}]{\setlength{\rightskip}{0pt plus 5cm}int Path\+Planner\+::find\+Package (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ std\+::string $>$}]{pack\+ID}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_a6a705be83291d487f6b0c06ef7838c02}{}\label{classPathPlanner_a6a705be83291d487f6b0c06ef7838c02}
+
+
+Method to print the pack\+I\+Ds and their location where to find them. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pack\+ID} & of type std\+::vector$<$std\+::string$>$ \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+exit status of type int 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+162                                                         \{
+163   \textcolor{keyword}{auto} j = goal.begin();
+164   std::string result =
+165       \textcolor{stringliteral}{"\(\backslash\)n*****************************\(\backslash\)n******Package "}
+166       \textcolor{stringliteral}{"Locations******\(\backslash\)n*****************************\(\backslash\)n"};
+167   \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i = packID.begin(); i != packID.end() && j != goal.end();
+168        i++, j++) \{
+169     result += (*i) + \textcolor{stringliteral}{" is in position x="} +
+170               std::to\_string((*j).target\_pose.pose.position.x) +
+171               \textcolor{stringliteral}{" y = "} + std::to\_string((*j).target\_pose.pose.position.y) + \textcolor{stringliteral}{"\(\backslash\)n"};
+172   \}
+173   ROS\_INFO\_STREAM(result);
+174   ros::Duration(10).sleep();
+175   \textcolor{keywordflow}{return} 0;
+176 \}
+\end{DoxyCode}
+\index{Path\+Planner@{Path\+Planner}!return\+Publisher@{return\+Publisher}}
+\index{return\+Publisher@{return\+Publisher}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{return\+Publisher()}{returnPublisher()}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Publisher Path\+Planner\+::return\+Publisher (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_a58568f3cc90cf9670d9b1cd3aff2e466}{}\label{classPathPlanner_a58568f3cc90cf9670d9b1cd3aff2e466}
+
+
+Method that returns publisher object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+init\+Pose\+Pub of type ros\+::\+Publisher 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+75 \{ \textcolor{keywordflow}{return} initPosePub; \}
+\end{DoxyCode}
+\index{Path\+Planner@{Path\+Planner}!send\+Goals@{send\+Goals}}
+\index{send\+Goals@{send\+Goals}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{send\+Goals()}{sendGoals()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ std\+::string $>$ Path\+Planner\+::send\+Goals (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_a49eccb73ef5e4d732d50e2b741f5dd53}{}\label{classPathPlanner_a49eccb73ef5e4d732d50e2b741f5dd53}
+
+
+Method to send goals to move\+\_\+base action server. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em none} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+pack\+ID of type std\+::vector$<$std\+::string$>$ 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+129                                             \{
+130   actionlib::SimpleActionClient<move\_base\_msgs::MoveBaseAction> ac(\textcolor{stringliteral}{"move\_base"},
+131                                                                    \textcolor{keyword}{true});
+132 
+133   std::vector<std::string> packID;
+134   \textcolor{comment}{// Wait for the action server to come up}
+135   \textcolor{keywordflow}{while} (!ac.waitForServer(ros::Duration(5.0))) \{
+136     ROS\_INFO(\textcolor{stringliteral}{"Waiting for the move\_base action server to come up"});
+137   \}
+138   \textcolor{comment}{// Publish initial position (x, y) and orientation quaternion of the}
+139   \textcolor{comment}{// Turtlebot. In this case (x, y) = (-3.0, -3.0) and w of quaternion = 1.0 (0}
+140   \textcolor{comment}{// degrees) All other parameters are 0.0 by default}
+141   publishInitPose(-3.0, -3.0, 1.0);
+142   \textcolor{keywordflow}{for} (\textcolor{keyword}{auto} i = goal.begin(); i != goal.end() && counter < goal.size(); i++) \{
+143     ROS\_INFO(\textcolor{stringliteral}{"Moving to goal %d \(\backslash\)n"}, counter + 1);
+144     \textcolor{comment}{// Send goal to move base}
+145     ac.sendGoal(*i);
+146     ac.waitForResult();
+147     \textcolor{keywordflow}{if} (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) \{
+148       counter = counter + 1;
+149       ROS\_INFO\_STREAM(\textcolor{stringliteral}{"Reached goal %d \(\backslash\)n"} << counter);
+150       \textcolor{keywordflow}{if} (counter == goal.size()) \{
+151         \textcolor{keywordflow}{break};
+152       \} \textcolor{keywordflow}{else} \{
+153         packID = \hyperlink{classPathPlanner_a8ea688c30b9c9ae09330aa55242ba6e0}{callVision}(packID);
+154       \}
+155     \} \textcolor{keywordflow}{else} \{
+156       ROS\_WARN\_STREAM(\textcolor{stringliteral}{"Failed to reach goal"});
+157     \}
+158   \}
+159   \textcolor{keywordflow}{return} packID;
+160 \}
+\end{DoxyCode}
+\index{Path\+Planner@{Path\+Planner}!wait\+Package\+Detection@{wait\+Package\+Detection}}
+\index{wait\+Package\+Detection@{wait\+Package\+Detection}!Path\+Planner@{Path\+Planner}}
+\subsubsection[{\texorpdfstring{wait\+Package\+Detection(std\+::string)}{waitPackageDetection(std::string)}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::string Path\+Planner\+::wait\+Package\+Detection (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{str}
+\end{DoxyParamCaption}
+)}\hypertarget{classPathPlanner_aa21d8bbc74638db9bf458caa0f7310b3}{}\label{classPathPlanner_aa21d8bbc74638db9bf458caa0f7310b3}
+
+
+Method to try again if the package detection is faulty. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em \hyperlink{classQReader}{Q\+Reader}} & object of \hyperlink{classQReader}{Q\+Reader} class \\
+\hline
+{\em str} & of type string \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+none 
+\end{DoxyReturn}
+
+\begin{DoxyCode}
+98                                                          \{
+99   \textcolor{comment}{// wait until package is detected}
+100   \textcolor{keywordflow}{while} (str.substr(0, 4) != \textcolor{stringliteral}{"pack"}) \{
+101     ros::spinOnce();
+102     std::vector<uint8\_t> result = reader.\hyperlink{classQReader_a70931e64e2530fe9ba36e414d463dc93}{returnBytes}();
+103     str.assign(result.begin(), result.end());
+104     \textcolor{comment}{// Check if QR code is detected properly}
+105     \textcolor{keywordflow}{if} (str.substr(0, 4) == \textcolor{stringliteral}{"pack"}) \{
+106       ROS\_INFO(\textcolor{stringliteral}{"QR code detected! \(\backslash\)n"});
+107       ROS\_INFO(\textcolor{stringliteral}{"Package ID is: %s \(\backslash\)n"}, str.c\_str());
+108       \textcolor{keywordflow}{break};
+109     \}
+110   \}
+111   \textcolor{keywordflow}{return} str;
+112 \}
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/package\+\_\+identification\+\_\+using\+\_\+turtlebot/\hyperlink{PathPlanner_8hpp}{Path\+Planner.\+hpp}\item 
+src/\hyperlink{PathPlanner_8cpp}{Path\+Planner.\+cpp}\end{DoxyCompactItemize}

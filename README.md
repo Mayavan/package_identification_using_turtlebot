@@ -123,12 +123,13 @@ doxygen ./Doxygen
  
 
 ## Known Issues and Bugs
-* In very rare situations, the Turtlebot might get stuck for sometime in detecting QR codes if 4 corner points of the QR code are not detected. This is mainly due to the simulated errors in odometry in Gazebo which results in very slanted perspectives. Another solution is to further tune the parameters in Harris corner detection to detect more points (which is kepy conservative as of now).
+* In very rare situations, the Turtlebot might get stuck for sometime in detecting QR codes if 4 corner points of the QR code are not detected. This is mainly due to the simulated errors in odometry in Gazebo which results in very slanted perspectives. Another solution is to further tune the parameters in Harris corner detection to detect more points (which is kept conservative as of now).
 
 * The move_base action client in the code has not been tested due to dependency issues for the turtlebot_gazebo packages in Travis. Testing this code would increase coverage to 97-98%.
 
 
 ## License
+
 ```
 Copyright (c) 2018, Mayavan,  Adarsh Jagan Sathyamoorthy 
  
