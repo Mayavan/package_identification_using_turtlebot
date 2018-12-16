@@ -96,14 +96,72 @@ For additional information see [here](http://learn.turtlebot.com/2015/02/03/8/).
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/rviz.png?raw=true" alt="Turtlebot Rviz."/>
 </p>
 
+The code related to this demo can be found in the src, launch and include folders.
+
 ## Test
-To run the test cases
+To run the test cases, run:
+```
+ rostest package_identification_using_turtlebot Qbot.test
+```
+
+All test cases in your catkin workspace can be run while compiling by:
+```
+catkin_make run_tests
+```
+
+This runs 12 test cases for various methods in the PathPlanner and QReader classes. The code for the tests can be found in the test folder.
+
+## Doxygen Documentation
+To install Doxygen:
+```
+sudo apt-get install doxygen
+``` 
+To generate Doxygen documentation, run:
+```
+doxygen ./Doxygen
+```
+ 
 
 ## Known Issues and Bugs
+* In very rare situations, the Turtlebot might get stuck for sometime in detecting QR codes if 4 corner points of the QR code are not detected. This is mainly due to the simulated errors in odometry in Gazebo which results in very slanted perspectives. Another solution is to further tune the parameters in Harris corner detection to detect more points (which is kepy conservative as of now).
 
-## API and other documentation
+* The move_base action client in the code has not been tested due to dependency issues for the turtlebot_gazebo packages in Travis. Testing this code would increase coverage to 97-98%.
+
+
+## License
+```
+Copyright (c) 2018, Mayavan,  Adarsh Jagan Sathyamoorthy 
+ 
+Redistribution and use in source and binary forms, with or without  
+modification, are permitted provided that the following conditions are 
+met:
+ 
+1. Redistributions of source code must retain the above copyright notice, 
+this list of conditions and the following disclaimer.
+ 
+2. Redistributions in binary form must reproduce the above copyright 
+notice, this list of conditions and the following disclaimer in the   
+documentation and/or other materials provided with the distribution.
+ 
+3. Neither the name of the copyright holder nor the names of its 
+contributors may be used to endorse or promote products derived from this 
+software without specific prior written permission.
+ 
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS 
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR 
+CONTRIBUTORS BE 
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF 
+THE POSSIBILITY OF SUCH DAMAGE.
+```
 
 ## Authors
 
-* Adarsh Jagan Sathyamoorthy Major: Robotics, E-Mail: asathyam@umd.edu
+* Adarsh Jagan Sathyamoorthy Major: I am a 2nd year Robotics graduate student at UMD College Park. I have a Bachelors degree in Electronics and Communication from National Institute of Technology- Tiruchirapalli, India. My primary interests are Planning, computer vision, and robot learning.  For more about me, please see my [linkedin](https://www.linkedin.com/in/adarsh-jagan-sathyamoorthy-6b6726b3/). Email: asathyam@umd.edu
 * RajendraMayavan Rajendran Sathyam Major: Robotics, E-Mail: mayavan@umd.edu
