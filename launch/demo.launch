@@ -13,7 +13,7 @@
   
   <node pkg="package_identification_using_turtlebot" type="search" name="search" output = "screen" required="true"/>
   
-  <include file="$(find gazebo_ros)/launch/empty_world.launch" output="log">
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
     <arg name="use_sim_time" value="true"/>
     <arg name="debug" value="false"/>
     <arg name="gui" value="$(arg gui)" />

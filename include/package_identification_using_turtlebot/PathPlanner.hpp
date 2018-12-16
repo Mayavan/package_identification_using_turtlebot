@@ -80,11 +80,6 @@ class PathPlanner {
   QReader reader;
 
   /**
-   * @brief Vector that stores a list of goal position.x, position.y
-   * orientation.z, and orientation.w. (in that order)
-   */
-  std::vector<std::vector<double>> goalPoints;
-  /**
    * @brief Stores the number of goals that have been reached
    */
   int counter;

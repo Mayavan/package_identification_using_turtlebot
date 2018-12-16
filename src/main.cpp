@@ -55,15 +55,6 @@ int main(int argc, char **argv) {
   PathPlanner planner(points);
   std::vector<std::string> packID = planner.sendGoals();
   int k = planner.findPackage(packID);
-  // std::string str;
-  // std::string fileLocation =
-  //     ros::package::getPath("package_identification_using_turtlebot") +
-  //     "/data/sym.png";
-  // cv::Mat image = cv::imread(fileLocation);
-  // QReader reader;
-  // reader.setImage(image);
-  // std::vector<uint8_t> result = reader.decodeQR();
-  // str.assign(result.begin(), result.end());
-  // ROS_INFO_STREAM(str.c_str());
+
   return 0;
 }

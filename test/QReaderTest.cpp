@@ -167,5 +167,47 @@ TEST(decodeQR, mask6) {
   reader.setImage(image);
   std::vector<uint8_t> result = reader.decodeQR();
   str.assign(result.begin(), result.end());
-  ASSERT_STREQ("gfgdgcvd", str.c_str());
+  ASSERT_STREQ("gfgdWcvd", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 3
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask3) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/mask3.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("unknown", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 7
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask7) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/mask7.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("unknown", str.c_str());
 }

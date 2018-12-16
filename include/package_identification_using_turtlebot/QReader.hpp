@@ -90,11 +90,6 @@ class QReader {
   std::vector<uint8_t> decodeQR();
 
   /**
-   * Subscriber to get the raw image from camera
-   */
-  image_transport::Subscriber imgSub;
-
-  /**
    * @brief Function to get the extracted data array.
    *
    * @param none
@@ -113,6 +108,10 @@ class QReader {
   void setImage(cv::Mat image);
 
  private:
+  /**
+   * Subscriber to get the raw image from camera
+   */
+  image_transport::Subscriber imgSub;
   /**
    * @brief The decoded bytes from the Qr code
    */

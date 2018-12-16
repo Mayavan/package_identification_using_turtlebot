@@ -49,11 +49,10 @@ PathPlanner::PathPlanner(std::vector<std::vector<double> > points) {
   initialPose.pose.pose.position.x = 0.0;
   initialPose.pose.pose.position.y = 0.0;
   initialPose.pose.pose.orientation.w = 1.0;
-  goalPoints = points;
   counter = 0;
 
-  for (auto i = goalPoints.begin();
-       i != goalPoints.end() && counter < goalPoints.size(); i++) {
+  for (auto i = points.begin(); i != points.end() && counter < points.size();
+       i++) {
     targetPose.target_pose.pose.position.x = (*i).at(0);
     targetPose.target_pose.pose.position.y = (*i).at(1);
     targetPose.target_pose.pose.orientation.z = (*i).at(2);
@@ -134,7 +133,7 @@ std::vector<std::string> PathPlanner::sendGoals() {
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
       counter = counter + 1;
       ROS_INFO("Reached goal %d \n", counter);
-      if (counter == goalPoints.size()) {
+      if (counter == goal.size()) {
         break;
       } else {
         packID = callVision(packID);
@@ -147,14 +146,15 @@ std::vector<std::string> PathPlanner::sendGoals() {
 }
 
 int PathPlanner::findPackage(std::vector<std::string> packID) {
-  auto j = goalPoints.begin();
+  auto j = goal.begin();
   std::cout << "*****************************" << std::endl;
   std::cout << "******Package Locations******" << std::endl;
   std::cout << "*****************************" << std::endl;
-  for (auto i = packID.begin(); i != packID.end() && j != goalPoints.end();
+  for (auto i = packID.begin(); i != packID.end() && j != goal.end();
        i++, j++) {
-    std::cout << (*i) << " is in position x=" << (*j).at(0)
-              << " y = " << (*j).at(1) << std::endl;
+    std::cout << (*i)
+              << " is in position x=" << (*j).target_pose.pose.position.x
+              << " y = " << (*j).target_pose.pose.position.y << std::endl;
   }
   ros::Duration(10).sleep();
   return 0;
