@@ -1,4 +1,4 @@
-# Package-Identification-using-Turtlebot
+# ENPM 808X Final - Package-Identification-using-Turtlebot
 
 [![Build Status](https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot.svg?branch=master)](https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot)
 
@@ -8,9 +8,23 @@
 
 ## Overview
 
-Robots have been used to improve efficiency in a various tasks in warehouses such as package handling, identification and organization. This project aims to simulate the use of Turtlebot in identifying packages with QR codes, in a warehouse setting. 
+Robots have been used to improve efficiency in a various tasks in warehouses such as package handling, identification and organization. This project aims to simulate the use of Turtlebot in identifying packages with QR codes, in a warehouse setting. The simulation is implemented in Gazebo. ROS packages such as gmapping, and teleop_twist_keyboard are used for mapping the environment in the simulation, while move_base is used for navigation.
 
-The simulation is implemented in Gazebo. ROS packages such as gmapping, and teleop_twist_keyboard are used for mapping the environment in the simulation, while move_base is used for navigation.
+<p align="center">
+  <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/navspeed.gif?raw=true" alt="Turtlebot navigating towards packages."/>
+</p>
+
+ Our main focus in this project is QR-code decoding. Image stream from Turtlebot's simulated camera is subscribed and processed to obtain a clear front view of the QR code. The masking and encoding type of the QR code is detected, and it is unmasked to extract a bit stream, which is then coverted to a string. This resultant string is the package ID. Each package ID must have a valid prefix to ensure that appropriate packages have arrived at the warehouse. In our case we use "pack" as a valid prefix. 
+
+<p align="center">
+  <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/transform.gif?raw=true" alt="Decoding the QR code."/>
+</p>
+
+The scenario is that some new packages of unknown identities have arrived at the warehouse and are stored in a location allotted to "new arrivals". This location is generally known, along with the floor plan of the warehouse. The Turtlebot starts from another corner of the warehouse and moves towards the packages avoiding all "mapped" obstacles as well as "unmapped" obstacles (the dustbin in front of one of the packages is unmapped.) The Turtlebot then sequentially moves from one package to another identifying and storing the package IDs and locations from which each package can be accessed. 
+
+<p align="center">
+  <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/moving_between_packages.gif?raw=true" alt="Moving to next package when current package is identified."/>
+</p>
 
 ## SIP
 
