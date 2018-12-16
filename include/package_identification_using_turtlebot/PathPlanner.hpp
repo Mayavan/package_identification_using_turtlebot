@@ -73,7 +73,12 @@ class PathPlanner {
   /**
    * @brief Stores the goal positions and orientations of the turtlebot.
    */
-  move_base_msgs::MoveBaseGoal goal;
+  std::vector<move_base_msgs::MoveBaseGoal> goal;
+  /**
+   * @brief Object of QReader class.
+   */
+  QReader reader;
+
   /**
    * @brief Vector that stores a list of goal position.x, position.y
    * orientation.z, and orientation.w. (in that order)
@@ -125,7 +130,7 @@ class PathPlanner {
    * @param  packID of type std::vector<std::string>
    * @return packID of type std::vector<std::string>
    */
-  std::vector<std::string> callVision(QReader&, std::vector<std::string>);
+  std::vector<std::string> callVision(std::vector<std::string>);
   /**
    * @brief  Method to send goals to move_base action server
    * @param  none
@@ -144,7 +149,7 @@ class PathPlanner {
    * @param  str of type string
    * @return none
    */
-  std::string waitPackageDetection(QReader&, std::string);
+  std::string waitPackageDetection(std::string);
 };
 
 #endif  // INCLUDE_PACKAGE_IDENTIFICATION_USING_TURTLEBOT_PATHPLANNER_HPP_

@@ -118,7 +118,6 @@ TEST(callVisionTest, testPlanner3) {
   sensor_msgs::ImagePtr msg =
       cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
   ros::Rate loop_rate(5);
-  QReader reader;
   PathPlanner planner({{-2.0, -3.0, 0.0, 1.0}, {-1.0, -2.0, 0.0, 1.0}});
   std::vector<std::string> packID;
   ros::Time start_time = ros::Time::now();
@@ -126,7 +125,7 @@ TEST(callVisionTest, testPlanner3) {
   // If the test is not completed within timeout the test fails
   while (ros::Time::now() - start_time < timeout) {
     pub.publish(msg);
-    packID = planner.callVision(reader, packID);
+    packID = planner.callVision(packID);
     if (packID.at(0).substr(0, 4) == "pack") break;
     loop_rate.sleep();
   }
@@ -153,7 +152,6 @@ TEST(waitPackageDetection, detectionCorrection) {
   sensor_msgs::ImagePtr msg =
       cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
   ros::Rate loop_rate(5);
-  QReader reader;
   PathPlanner planner({{-2.0, -3.0, 0.0, 1.0}, {-1.0, -2.0, 0.0, 1.0}});
   ros::Time start_time = ros::Time::now();
   ros::Duration timeout(15.0);
@@ -162,7 +160,7 @@ TEST(waitPackageDetection, detectionCorrection) {
   while (ros::Time::now() - start_time < timeout) {
     pub.publish(msg);
     std::string incorrectDetection = "hello";
-    result = planner.waitPackageDetection(reader, incorrectDetection);
+    result = planner.waitPackageDetection(incorrectDetection);
     if (result.substr(0, 4) == "pack") break;
     loop_rate.sleep();
   }

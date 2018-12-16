@@ -65,27 +65,6 @@ TEST(decodeQR, unsupportedEncoding) {
 }
 
 /**
- * @brief      Testing if the decoder function can apply mask 1
- *
- * @param[in]     TESTSuite
- * @param[in]     testService
- *
- * @return     none
- */
-TEST(decodeQR, mask1) {
-  std::string str;
-  std::string fileLocation =
-      ros::package::getPath("package_identification_using_turtlebot") +
-      "/data/pack2.png";
-  cv::Mat image = cv::imread(fileLocation);
-  QReader reader;
-  reader.setImage(image);
-  std::vector<uint8_t> result = reader.decodeQR();
-  str.assign(result.begin(), result.end());
-  ASSERT_STREQ("pack#2", str.c_str());
-}
-
-/**
  * @brief      Testing if the decoder function can apply mask 2
  *
  * @param[in]     TESTSuite
@@ -94,6 +73,27 @@ TEST(decodeQR, mask1) {
  * @return     none
  */
 TEST(decodeQR, mask2) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/apple.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("Apple", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 0
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask0) {
   std::string str;
   std::string fileLocation =
       ros::package::getPath("package_identification_using_turtlebot") +
@@ -107,14 +107,14 @@ TEST(decodeQR, mask2) {
 }
 
 /**
- * @brief      Testing if the decoder function can apply mask 3
+ * @brief      Testing if the decoder function can apply mask 1
  *
  * @param[in]     TESTSuite
  * @param[in]     testService
  *
  * @return     none
  */
-TEST(decodeQR, mask3) {
+TEST(decodeQR, mask1) {
   std::string str;
   std::string fileLocation =
       ros::package::getPath("package_identification_using_turtlebot") +
@@ -147,4 +147,25 @@ TEST(decodeQR, unknownImage) {
   std::vector<uint8_t> result = reader.decodeQR();
   str.assign(result.begin(), result.end());
   ASSERT_STREQ("unknown", str.c_str());
+}
+
+/**
+ * @brief      Testing if the decoder function can apply mask 6
+ *
+ * @param[in]     TESTSuite
+ * @param[in]     testService
+ *
+ * @return     none
+ */
+TEST(decodeQR, mask6) {
+  std::string str;
+  std::string fileLocation =
+      ros::package::getPath("package_identification_using_turtlebot") +
+      "/data/random.png";
+  cv::Mat image = cv::imread(fileLocation);
+  QReader reader;
+  reader.setImage(image);
+  std::vector<uint8_t> result = reader.decodeQR();
+  str.assign(result.begin(), result.end());
+  ASSERT_STREQ("gfgdgcvd", str.c_str());
 }

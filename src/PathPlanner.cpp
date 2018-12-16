@@ -42,13 +42,24 @@
 PathPlanner::PathPlanner(std::vector<std::vector<double> > points) {
   initPosePub = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>(
       "/initialpose", 1000);
+  move_base_msgs::MoveBaseGoal targetPose;
   initialPose.header.frame_id = "map";
-  goal.target_pose.header.frame_id = "map";
+  targetPose.target_pose.header.frame_id = "map";
+  targetPose.target_pose.header.stamp = ros::Time::now();
   initialPose.pose.pose.position.x = 0.0;
   initialPose.pose.pose.position.y = 0.0;
   initialPose.pose.pose.orientation.w = 1.0;
-  goalPoints = points;  //
+  goalPoints = points;
   counter = 0;
+
+  for (auto i = goalPoints.begin();
+       i != goalPoints.end() && counter < goalPoints.size(); i++) {
+    targetPose.target_pose.pose.position.x = (*i).at(0);
+    targetPose.target_pose.pose.position.y = (*i).at(1);
+    targetPose.target_pose.pose.orientation.z = (*i).at(2);
+    targetPose.target_pose.pose.orientation.w = (*i).at(3);
+    goal.push_back(targetPose);
+  }
 }
 
 PathPlanner::~PathPlanner() {}
@@ -73,8 +84,7 @@ std::vector<double> PathPlanner::callPublisher(double x, double y, double w) {
   return publishInitPose(x, y, w);
 }
 
-std::string PathPlanner::waitPackageDetection(QReader& reader,
-                                              std::string str) {
+std::string PathPlanner::waitPackageDetection(std::string str) {
   // wait until package is detected
   while (str.substr(0, 4) != "pack") {
     ros::spinOnce();
@@ -91,7 +101,7 @@ std::string PathPlanner::waitPackageDetection(QReader& reader,
 }
 
 std::vector<std::string> PathPlanner::callVision(
-    QReader& reader, std::vector<std::string> packID) {
+    std::vector<std::string> packID) {
   // Call image callback
   ros::spinOnce();
   std::vector<uint8_t> result = reader.returnBytes();
@@ -99,7 +109,7 @@ std::vector<std::string> PathPlanner::callVision(
   str.assign(result.begin(), result.end());
   ROS_INFO("Package ID is: %s \n", str.c_str());
 
-  packID.push_back(waitPackageDetection(reader, str));
+  packID.push_back(waitPackageDetection(str));
 
   return packID;
 }
@@ -107,7 +117,7 @@ std::vector<std::string> PathPlanner::callVision(
 std::vector<std::string> PathPlanner::sendGoals() {
   actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> ac("move_base",
                                                                    true);
-  QReader reader;
+
   std::vector<std::string> packID;
   // Wait for the action server to come up
   while (!ac.waitForServer(ros::Duration(5.0))) {
@@ -117,16 +127,9 @@ std::vector<std::string> PathPlanner::sendGoals() {
   // Turtlebot. In this case (x, y) = (-3.0, -3.0) and w of quaternion = 1.0 (0
   // degrees) All other parameters are 0.0 by default
   publishInitPose(-3.0, -3.0, 1.0);
-  goal.target_pose.header.stamp = ros::Time::now();
-  for (auto i = goalPoints.begin();
-       i != goalPoints.end() && counter < goalPoints.size(); i++) {
+  for (auto i = goal.begin(); i != goal.end() && counter < goal.size(); i++) {
     ROS_INFO("Moving to goal %d \n", counter + 1);
-    goal.target_pose.pose.position.x = (*i).at(0);
-    goal.target_pose.pose.position.y = (*i).at(1);
-    goal.target_pose.pose.orientation.z = (*i).at(2);
-    goal.target_pose.pose.orientation.w = (*i).at(3);
-    ROS_INFO("Sending goal");
-    ac.sendGoal(goal);
+    ac.sendGoal(*i);
     ac.waitForResult();
     if (ac.getState() == actionlib::SimpleClientGoalState::SUCCEEDED) {
       counter = counter + 1;
@@ -134,7 +137,7 @@ std::vector<std::string> PathPlanner::sendGoals() {
       if (counter == goalPoints.size()) {
         break;
       } else {
-        packID = callVision(reader, packID);
+        packID = callVision(packID);
       }
     } else {
       ROS_INFO("Failed to reach goal");
@@ -144,7 +147,6 @@ std::vector<std::string> PathPlanner::sendGoals() {
 }
 
 int PathPlanner::findPackage(std::vector<std::string> packID) {
-  // TODO(Adarsh): May need try and catch?
   auto j = goalPoints.begin();
   std::cout << "*****************************" << std::endl;
   std::cout << "******Package Locations******" << std::endl;

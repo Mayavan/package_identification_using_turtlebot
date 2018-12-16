@@ -1,5 +1,4 @@
 <launch>
-
   <arg name="x" default="-3.0"/>
   <arg name="y" default="-3.0"/>
   <arg name="z" default="0.0"/>
@@ -12,7 +11,9 @@
   <arg name="stacks"    value="$(optenv TURTLEBOT_STACKS hexagons)"/>  <!-- circles, hexagons --> 
   <arg name="3d_sensor" value="$(optenv TURTLEBOT_3D_SENSOR kinect)"/>  <!-- kinect, asus_xtion_pro --> 
   
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+  <node pkg="package_identification_using_turtlebot" type="search" name="search" output = "screen" required="true"/>
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" output="log">
     <arg name="use_sim_time" value="true"/>
     <arg name="debug" value="false"/>
     <arg name="gui" value="$(arg gui)" />
@@ -46,7 +47,5 @@
     <remap from="image" to="/camera/depth/image_raw"/>
     <remap from="scan" to="/scan"/>
   </node>
-
-  <node pkg="package_identification_using_turtlebot" type="search" name="search" output = "screen" launch-prefix = "gnome-terminal -e"/>
 
 </launch>

@@ -40,6 +40,7 @@
 #include "package_identification_using_turtlebot/PathPlanner.hpp"
 #include "package_identification_using_turtlebot/QReader.hpp"
 
+#include <ros/package.h>
 #include <ros/ros.h>
 
 int main(int argc, char **argv) {
@@ -54,7 +55,15 @@ int main(int argc, char **argv) {
   PathPlanner planner(points);
   std::vector<std::string> packID = planner.sendGoals();
   int k = planner.findPackage(packID);
-  //  QReader reader;
-  //  ros::spin();
+  // std::string str;
+  // std::string fileLocation =
+  //     ros::package::getPath("package_identification_using_turtlebot") +
+  //     "/data/sym.png";
+  // cv::Mat image = cv::imread(fileLocation);
+  // QReader reader;
+  // reader.setImage(image);
+  // std::vector<uint8_t> result = reader.decodeQR();
+  // str.assign(result.begin(), result.end());
+  // ROS_INFO_STREAM(str.c_str());
   return 0;
 }

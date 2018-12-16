@@ -614,6 +614,7 @@ void QReader::unmask(std::vector<std::vector<bool> >& code) {
   mask += code[8][3] ? 2 : 0;
   mask += code[8][4] ? 1 : 0;
 
+  ROS_INFO_STREAM("Mask used: " << mask);
   for (int i = 0; i < 21; i++) {
     for (int j = 0; j < 21; j++) {
       switch (mask) {
