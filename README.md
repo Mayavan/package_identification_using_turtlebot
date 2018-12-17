@@ -69,7 +69,7 @@ For more details follow the steps [here](http://wiki.ros.org/catkin/Tutorials/cr
 Download this repository inside src directory inside your catkin workspace.
 ```
 cd ~/catkin_ws/src/
-git clone https://github.com/Mayavan/Package_Identification_using_Turtlebot.git
+git clone https://github.com/Mayavan/package_identification_using_turtlebot.git
 ```
 
 ## Build
