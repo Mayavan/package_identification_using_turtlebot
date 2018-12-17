@@ -1,8 +1,8 @@
 # ENPM 808X Final - Package-Identification-using-Turtlebot
 
-[![Build Status](https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot.svg?branch=master)](https://travis-ci.org/Mayavan/Package_Identification_using_Turtlebot)
+[![Build Status](https://travis-ci.org/Mayavan/package_identification_using_turtlebot.svg?branch=master)](https://travis-ci.org/Mayavan/package_identification_using_turtlebot)
 
-[![Coverage Status](https://coveralls.io/repos/github/Mayavan/Package_Identification_using_Turtlebot/badge.svg?branch=master)](https://coveralls.io/github/Mayavan/Package_Identification_using_Turtlebot?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/Mayavan/package_identification_using_turtlebot/badge.svg?branch=master)](https://coveralls.io/github/Mayavan/package_identification_using_turtlebot?branch=master)
 
 [![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
@@ -25,6 +25,9 @@ The scenario is that some new packages of unknown identities have arrived at the
 <p align="center">
   <img src="https://github.com/Mayavan/Package_Identification_using_Turtlebot/blob/master/images/moving_between_packages.gif?raw=true" alt="Moving to next package when current package is identified."/>
 </p>
+
+## Presentation
+[Here](https://youtu.be/TZWnTCO4xOE) is the link to our video presentation and [here](https://docs.google.com/presentation/d/1z3j81NSBstdXP-oASMYSJyp5DKBPQ6vCecCbNV_1284/edit?usp=sharing) is the link to the presentation slides.
 
 ## SIP
 
